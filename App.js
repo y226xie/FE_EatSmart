@@ -4,6 +4,7 @@ import HomeScreen from './components/HomeScreen';
 import DetailsScreen from './components/DetailsScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ProfileScreen from './components/ProfileScreen';
+import MenuScreen from './components/MenuScreen';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 const Tab = createBottomTabNavigator();
@@ -15,25 +16,27 @@ function App() {
         screenOptions={({route}) => ({
           tabBarIcon: ({focused, color, size}) => {
             let iconName;
-
             if (route.name === 'Home') {
-              iconName = focused
-                ? 'ios-information-circle'
-                : 'ios-information-circle-outline';
+              iconName = 'home';
             } else if (route.name === 'Profile') {
-              iconName = focused ? 'settings' : 'settings';
+              iconName = 'settings';
             } else if (route.name === 'Details') {
-              iconName = focused ? 'heart' : 'heart';
+              iconName = 'heart';
+            } else if (route.name === 'Menu') {
+              iconName = 'menu';
             }
             // You can return any component that you like here!
             return <Ionicons name={iconName} size={size} color={color} />;
           },
-          tabBarActiveTintColor: 'tomato',
+          tabBarActiveTintColor: 'rgb(255, 207, 97)',
           tabBarInactiveTintColor: 'gray',
+          headerShown: false,
+          tabBarShowLabel: false,
         })}>
         <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Profile" component={ProfileScreen} />
+        <Tab.Screen name="Menu" component={MenuScreen} />
         <Tab.Screen name="Details" component={DetailsScreen} />
+        <Tab.Screen name="Profile" component={ProfileScreen} />
       </Tab.Navigator>
     </NavigationContainer>
   );
