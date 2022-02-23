@@ -33,11 +33,12 @@ export default class InventoryScreen extends Component {
   }
 
 
-  async getIngredients() {
+  getIngredients = async () => {
     try {
+      this.setState({ isLoading: true});
       const response = await fetch('http:localhost:4000/storage/ingredients', {
         headers: {
-          'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY0NTU1NzkyNSwianRpIjoiYjk3NjI0YWUtYjQ3Ni00YjVhLTk2OTUtYTA5ODdiZDQyMmMwIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6eyJfaWQiOiI2MWQyZjViODY0MWJmNTk1YzI0MjA5MjkiLCJmaXJzdE5hbWUiOiJGdWhhaSIsImxhc3ROYW1lIjoiR2FvIiwiZW1haWwiOiJmaGFpLmdhb0BnbWFpbC5jb20iLCJwYXNzd29yZCI6InRlc3QifSwibmJmIjoxNjQ1NTU3OTI1LCJleHAiOjE2NDU2NDQzMjV9.Pl5nUbT4aGKbyqsTkQS8JSgpcKqBKatUVM-ZTEVY7fQ`,
+          'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY0NTY0NTIwMywianRpIjoiZTMyYjA1OGEtNmIwMC00ZTJhLThjYTktYTJjMjI1Y2RkNjdiIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6eyJfaWQiOiI2MWQyZjViODY0MWJmNTk1YzI0MjA5MjkiLCJmaXJzdE5hbWUiOiJGdWhhaSIsImxhc3ROYW1lIjoiR2FvIiwiZW1haWwiOiJmaGFpLmdhb0BnbWFpbC5jb20iLCJwYXNzd29yZCI6InRlc3QifSwibmJmIjoxNjQ1NjQ1MjAzLCJleHAiOjE2NDU3MzE2MDN9.vghDhBfLoBOb5WAKK7ufD5Fx88sgLKqWC2dgo2oTjxI`,
           'page': '1'
         }
       });
@@ -68,6 +69,7 @@ export default class InventoryScreen extends Component {
                 {data.map((t, i) => {
                     return <IngredientInformation 
                     key={i} data={t}
+                    onChange={this.getIngredients}
                     />
                 })}
               </View>

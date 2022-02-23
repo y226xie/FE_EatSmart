@@ -1,7 +1,8 @@
 import styled from 'styled-components/native';
 import {Button, View, Text, Image, Modal, StyleSheet, Pressable, TouchableOpacity, TextInput} from 'react-native';
 import React, {useState} from 'react';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+// import Ionicons from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import DatePicker from 'react-native-date-picker'
 import RNDateFormat from 'react-native-date-format';
 
@@ -61,37 +62,56 @@ const styles = StyleSheet.create({
 
 export function IngredientInformation(props) {
    const [isModalOpen, setIsModalOpen] = React.useState(false);
-   const [quantity, onChangeQuantity] = React.useState(props.data.amount);
+   const [quantity, setQuantity] = React.useState(props.data.amount);
 //    const [bestBefore, onChangeBestBefore] = React.useState(props.data.best_before);
     const [date, setDate] = useState(new Date(props.data.best_before));
     const [open, setOpen] = useState(false);
 
+    const handleDelete = () => {
+        try {
+            const response = fetch('http:localhost:4000/storage/ingredient/' + props.data._id, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': `application/json`,
+                    'Accept': `application/json`,
+                    'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY0NTY0NTIwMywianRpIjoiZTMyYjA1OGEtNmIwMC00ZTJhLThjYTktYTJjMjI1Y2RkNjdiIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6eyJfaWQiOiI2MWQyZjViODY0MWJmNTk1YzI0MjA5MjkiLCJmaXJzdE5hbWUiOiJGdWhhaSIsImxhc3ROYW1lIjoiR2FvIiwiZW1haWwiOiJmaGFpLmdhb0BnbWFpbC5jb20iLCJwYXNzd29yZCI6InRlc3QifSwibmJmIjoxNjQ1NjQ1MjAzLCJleHAiOjE2NDU3MzE2MDN9.vghDhBfLoBOb5WAKK7ufD5Fx88sgLKqWC2dgo2oTjxI`,
+
+                },
+            });
+            props.onChange();
+            setIsModalOpen(false);
+
+        } catch (error) {
+            console.log(error.message)
+        }
+    };
+
     const handleCancel = () => {
         setDate(new Date(props.data.best_before))
-        onChangeQuantity(props.data.amount)
+        setQuantity(props.data.amount)
         setIsModalOpen(false);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         try{
             // props.data.amount = quantity;
             put_body = JSON.stringify({
                 "best_before": date,
                 "amount": quantity
             })
-            const response = fetch('http:localhost:4000/storage/ingredient/'+ props.data._id, {
+            const response = await fetch('http:localhost:4000/storage/ingredient/'+ props.data._id, {
                 method: 'PUT',
                 headers: {
                 'Content-Type': `application/json`,
                 'Accept': `application/json`,
-                'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY0NTU1NzkyNSwianRpIjoiYjk3NjI0YWUtYjQ3Ni00YjVhLTk2OTUtYTA5ODdiZDQyMmMwIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6eyJfaWQiOiI2MWQyZjViODY0MWJmNTk1YzI0MjA5MjkiLCJmaXJzdE5hbWUiOiJGdWhhaSIsImxhc3ROYW1lIjoiR2FvIiwiZW1haWwiOiJmaGFpLmdhb0BnbWFpbC5jb20iLCJwYXNzd29yZCI6InRlc3QifSwibmJmIjoxNjQ1NTU3OTI1LCJleHAiOjE2NDU2NDQzMjV9.Pl5nUbT4aGKbyqsTkQS8JSgpcKqBKatUVM-ZTEVY7fQ`,
+                'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY0NTY0NTIwMywianRpIjoiZTMyYjA1OGEtNmIwMC00ZTJhLThjYTktYTJjMjI1Y2RkNjdiIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6eyJfaWQiOiI2MWQyZjViODY0MWJmNTk1YzI0MjA5MjkiLCJmaXJzdE5hbWUiOiJGdWhhaSIsImxhc3ROYW1lIjoiR2FvIiwiZW1haWwiOiJmaGFpLmdhb0BnbWFpbC5jb20iLCJwYXNzd29yZCI6InRlc3QifSwibmJmIjoxNjQ1NjQ1MjAzLCJleHAiOjE2NDU3MzE2MDN9.vghDhBfLoBOb5WAKK7ufD5Fx88sgLKqWC2dgo2oTjxI`,
                 },
                 body: put_body
-            });
+            })
         } catch (error) {
             console.log(error.message)
         }
-        setIsModalOpen(false);
+        setIsModalOpen(false)
     }
 
     return (
@@ -121,7 +141,7 @@ export function IngredientInformation(props) {
                             <Text>Quantity</Text>
                             <TextInput
                                 style={styles.input}
-                                onChangeText={onChangeQuantity}
+                                onChangeText={setQuantity}
                                 value={JSON.stringify(quantity)}
                                 placeholder="quantity"
                             />
@@ -132,8 +152,10 @@ export function IngredientInformation(props) {
                         <Button title="Select Date" onPress={() => setOpen(true)} />
                         <DatePicker
                             modal
+                            mode="date"
                             open={open}
                             date={date}
+                            locale="en_CA"
                             onConfirm={(date) => {
                                 setOpen(false)
                                 setDate(date)
@@ -178,12 +200,17 @@ export function IngredientInformation(props) {
             <Column>
             <Text> {props.data.name} </Text>
             <Text> {props.data.aisle} </Text>
-            <Text> {props.data.amount} {props.data.unit} </Text>
+            <Text> {quantity} {props.data.unit} </Text>
             <Row>
-                <Text> {props.data.best_before.slice(0, 11)} </Text>
+                <Text> {date.toISOString().slice(0, 11)} </Text>
                 <TouchableOpacity onPress={()=>setIsModalOpen(true)}>
                     <View>
-                    <Ionicons  name={"pencil"}/>
+                    <Icon  name={"pencil"}/>
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleDelete}>
+                    <View>
+                        <Icon name={"delete"}/>
                     </View>
                 </TouchableOpacity>
 
