@@ -5,6 +5,7 @@ import DetailsScreen from './components/DetailsScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ProfileScreen from './components/ProfileScreen';
 import MenuScreen from './components/MenuScreen';
+import InventoryScreen from './components/InventoryScreen';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 const Tab = createBottomTabNavigator();
@@ -23,7 +24,7 @@ function App() {
               iconName = 'settings';
             } else if (route.name === 'Details') {
               iconName = 'heart';
-            } else if (route.name === 'Menu') {
+            } else if (route.name === 'Inventory') {
               iconName = 'menu';
             }
             // You can return any component that you like here!
@@ -35,7 +36,8 @@ function App() {
           tabBarShowLabel: false,
         })}>
         <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Menu" component={MenuScreen} />
+        {/* <Tab.Screen name="Menu" component={MenuScreen} /> */}
+        <Tab.Screen name="Inventory" component={InventoryScreen}/>
         <Tab.Screen name="Details" component={DetailsScreen} />
         <Tab.Screen name="Profile" component={ProfileScreen} />
       </Tab.Navigator>

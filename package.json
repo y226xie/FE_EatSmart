@@ -10,19 +10,24 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-native-community/datetimepicker": "^5.1.0",
     "@react-navigation/bottom-tabs": "^6.2.0",
     "@react-navigation/native": "^6.0.8",
     "@react-navigation/native-stack": "^6.5.0",
     "install": "^0.13.0",
+    "moment": "^2.29.1",
     "npm": "^8.5.1",
     "react": "17.0.2",
     "react-native": "0.67.1",
+    "react-native-date-format": "^1.1.30",
+    "react-native-date-picker": "^4.1.5",
     "react-native-elements": "^3.4.2",
     "react-native-paper": "^4.11.2",
     "react-native-safe-area-context": "^3.4.0",
     "react-native-screens": "^3.11.1",
-    "react-native-vector-icons": "^9.1.0"
-  },
+    "react-native-vector-icons": "^9.1.0",
+    "styled-components": "^5.3.3"
+    },
   "devDependencies": {
     "@babel/core": "^7.12.9",
     "@babel/runtime": "^7.12.5",
