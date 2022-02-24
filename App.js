@@ -1,48 +1,121 @@
+import * as Keychain from "react-native-keychain";
 import * as React from 'react';
+import SignInScreen from "./components/SignInScreen";
+import TabNavigator from "./components/TabNavigator";
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
-import HomeScreen from './components/HomeScreen';
-import DetailsScreen from './components/DetailsScreen';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import ProfileScreen from './components/ProfileScreen';
-import MenuScreen from './components/MenuScreen';
-import InventoryScreen from './components/InventoryScreen';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
-const Tab = createBottomTabNavigator();
 
-function App() {
-  return (
-    <NavigationContainer>
-      <Tab.Navigator
-        initialRouteName="Home"
-        screenOptions={({route}) => ({
-          tabBarIcon: ({focused, color, size}) => {
-            let iconName;
-            if (route.name === 'Home') {
-              iconName = 'home';
-            } else if (route.name === 'Profile') {
-              iconName = 'settings';
-            } else if (route.name === 'Details') {
-              iconName = 'heart';
-            } else if (route.name === 'Inventory') {
-              iconName = 'menu';
+const Stack = createNativeStackNavigator();
+export const AuthContext = React.createContext();
+
+
+export default function App() {
+  const [state, dispatch] = React.useReducer(
+    (prevState, action) => {
+      switch (action.type) {
+        case 'RESTORE_TOKEN':
+          return {
+            ...prevState,
+            userToken: action.token,
+            isLoading: false,
+          };
+        case 'SIGN_IN':
+          return {
+            ...prevState,
+            isSignout: false,
+            userToken: action.token,
+          };
+        case 'SIGN_OUT':
+          return {
+            ...prevState,
+            isSignout: true,
+            userToken: null,
+          };
+      }
+    },
+    {
+      isLoading: true,
+      isSignout: false,
+      userToken: null,
+    }
+  );
+
+  React.useEffect(() => {
+    // Fetch the token from storage then navigate to our appropriate place
+    const bootstrapAsync = async () => {
+      let userToken;
+
+      try {
+        userToken = await Keychain.getGenericPassword();
+        if (userToken === false) {
+          userToken = null
+        }
+      } catch (e) {
+        // Restoring token failed
+      }
+
+      // After restoring token, we may need to validate it in production apps
+
+      // This will switch to the App screen or Auth screen and this loading
+      // screen will be unmounted and thrown away.
+      dispatch({ type: 'RESTORE_TOKEN', token: userToken });
+    };
+
+    bootstrapAsync();
+  }, []);
+
+  const authContext = React.useMemo(
+    () => ({
+      signIn: async data => {
+          try {
+            const response = await fetch('http:localhost:4000/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': `application/json`,
+                    'Accept': `application/json`,
+                },
+                body: JSON.stringify({
+                    "email": data.username,
+                    "password": data.password,
+                })
+            });
+            json = await response.json();
+            if (json.ok === false) {
+                console.log(json.message);
+            } else {
+                creds = json.data
+                await Keychain.setGenericPassword(creds.email, creds.token);
             }
-            // You can return any component that you like here!
-            return <Ionicons name={iconName} size={size} color={color} />;
-          },
-          tabBarActiveTintColor: 'rgb(255, 207, 97)',
-          tabBarInactiveTintColor: 'gray',
-          headerShown: false,
-          tabBarShowLabel: false,
-        })}>
-        <Tab.Screen name="Home" component={HomeScreen} />
-        {/* <Tab.Screen name="Menu" component={MenuScreen} /> */}
-        <Tab.Screen name="Inventory" component={InventoryScreen}/>
-        <Tab.Screen name="Details" component={DetailsScreen} />
-        <Tab.Screen name="Profile" component={ProfileScreen} />
-      </Tab.Navigator>
-    </NavigationContainer>
+        } catch (error) {
+            console.log(error.message)
+        }
+
+        dispatch({ type: 'SIGN_IN', token: creds });
+      },
+      signOut: async () => {
+        const logout = await Keychain.resetGenericPassword();
+        dispatch({ type: 'SIGN_OUT' });
+      },
+      // signUp: async data => {
+      //   dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' });
+      // },
+    }),
+    []
+  );
+
+  return (
+    <AuthContext.Provider value={authContext}>
+      <NavigationContainer>
+      <Stack.Navigator>
+        {state.userToken == null ? (
+          <Stack.Screen name="SignIn" component={SignInScreen} />
+        ) : (
+          <Stack.Screen name="Content" component={TabNavigator} />
+        )}
+      </Stack.Navigator>
+      </NavigationContainer>
+    </AuthContext.Provider>
+    
   );
 }
-
-export default App;

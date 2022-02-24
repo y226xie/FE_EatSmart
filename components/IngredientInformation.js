@@ -4,8 +4,7 @@ import React, {useState} from 'react';
 // import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import DatePicker from 'react-native-date-picker'
-import RNDateFormat from 'react-native-date-format';
-
+import * as Keychain from 'react-native-keychain'
 
 const styles = StyleSheet.create({
     centeredView: {
@@ -67,14 +66,15 @@ export function IngredientInformation(props) {
     const [date, setDate] = useState(new Date(props.data.best_before));
     const [open, setOpen] = useState(false);
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         try {
-            const response = fetch('http:localhost:4000/storage/ingredient/' + props.data._id, {
+            const userToken = await Keychain.getGenericPassword()
+            const response = await fetch('http:localhost:4000/storage/ingredient/' + props.data._id, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': `application/json`,
                     'Accept': `application/json`,
-                    'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY0NTY0NTIwMywianRpIjoiZTMyYjA1OGEtNmIwMC00ZTJhLThjYTktYTJjMjI1Y2RkNjdiIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6eyJfaWQiOiI2MWQyZjViODY0MWJmNTk1YzI0MjA5MjkiLCJmaXJzdE5hbWUiOiJGdWhhaSIsImxhc3ROYW1lIjoiR2FvIiwiZW1haWwiOiJmaGFpLmdhb0BnbWFpbC5jb20iLCJwYXNzd29yZCI6InRlc3QifSwibmJmIjoxNjQ1NjQ1MjAzLCJleHAiOjE2NDU3MzE2MDN9.vghDhBfLoBOb5WAKK7ufD5Fx88sgLKqWC2dgo2oTjxI`,
+                    'Authorization': `Bearer ${userToken.password}`,
 
                 },
             });
@@ -95,6 +95,7 @@ export function IngredientInformation(props) {
     const handleSubmit = async () => {
         try{
             // props.data.amount = quantity;
+            const userToken = await Keychain.getGenericPassword()
             put_body = JSON.stringify({
                 "best_before": date,
                 "amount": quantity
@@ -104,7 +105,7 @@ export function IngredientInformation(props) {
                 headers: {
                 'Content-Type': `application/json`,
                 'Accept': `application/json`,
-                'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY0NTY0NTIwMywianRpIjoiZTMyYjA1OGEtNmIwMC00ZTJhLThjYTktYTJjMjI1Y2RkNjdiIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6eyJfaWQiOiI2MWQyZjViODY0MWJmNTk1YzI0MjA5MjkiLCJmaXJzdE5hbWUiOiJGdWhhaSIsImxhc3ROYW1lIjoiR2FvIiwiZW1haWwiOiJmaGFpLmdhb0BnbWFpbC5jb20iLCJwYXNzd29yZCI6InRlc3QifSwibmJmIjoxNjQ1NjQ1MjAzLCJleHAiOjE2NDU3MzE2MDN9.vghDhBfLoBOb5WAKK7ufD5Fx88sgLKqWC2dgo2oTjxI`,
+                'Authorization': `Bearer ${userToken.password}`,
                 },
                 body: put_body
             })
