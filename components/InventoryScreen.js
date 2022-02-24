@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginLeft: 18,
   },
-})
+});
 
 export default class InventoryScreen extends Component {
   constructor(props) {
@@ -27,15 +27,14 @@ export default class InventoryScreen extends Component {
 
     this.state = {
       data: [],
-      isLoading: true
+      isLoading: true,
     };
   }
-
 
   getIngredients = async () => {
     userToken = await Keychain.getGenericPassword()
     try {
-      this.setState({ isLoading: true});
+      this.setState({isLoading: true});
       const response = await fetch('http:localhost:4000/storage/ingredients', {
         headers: {
           'Authorization': `Bearer ${userToken.password}`,
@@ -43,40 +42,42 @@ export default class InventoryScreen extends Component {
         }
       });
       const json = await response.json();
-      this.setState({data: json.message})
+      this.setState({data: json.message});
     } catch (error) {
-      console.log(error.message)
+      console.log(error.message);
     } finally {
-      this.setState({ isLoading: false});
+      this.setState({isLoading: false});
     }
-  }
+  };
 
   componentDidMount() {
     this.getIngredients();
   }
 
-
   render() {
     const {data, isLoading} = this.state;
 
-
     return (
       <View style={styles.container}>
-        {isLoading ? <ActivityIndicator/> : (
-            <View style={styles.appArea}>
-              <Text style={styles.title}>Ingredient Information</Text>
-              <View>
-                {data.map((t, i) => {
-                    return <IngredientInformation 
-                    key={i} data={t}
+        {isLoading ? (
+          <ActivityIndicator />
+        ) : (
+          <View style={styles.appArea}>
+            <Text style={styles.title}>Ingredient Information</Text>
+            <View>
+              {data.map((t, i) => {
+                return (
+                  <IngredientInformation
+                    key={i}
+                    data={t}
                     onChange={this.getIngredients}
-                    />
-                })}
-              </View>
+                  />
+                );
+              })}
             </View>
-
+          </View>
         )}
       </View>
-    )
+    );
   }
 }
