@@ -1,19 +1,27 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, Button} from 'react-native';
+import {
+  ScrollView,
+  View,
+  Text,
+  StyleSheet,
+  Button,
+  Dimensions,
+} from 'react-native';
 import {SearchBar} from 'react-native-elements';
 import RecipeRecommendation from '../utils/RecipeRecommendation';
 import {Card} from 'react-native-paper';
 import CurrentStock from '../utils/CurrentStock';
 
+const screenWidth = Dimensions.get('screen').width;
+const screenHeight = Dimensions.get('screen').height;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
     backgroundColor: 'rgb(242, 243, 237)',
   },
   appArea: {
-    marginTop: 80,
+    marginTop: screenHeight * 0.05,
     marginHorizontal: 18,
   },
   title: {
@@ -52,7 +60,7 @@ function Main({navigation}) {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.appArea}>
         <View>
           <Text style={styles.title}>Welcome Back!</Text>
@@ -103,7 +111,7 @@ function Main({navigation}) {
           </Card>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
