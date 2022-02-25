@@ -6,6 +6,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import ProfileScreen from './ProfileScreen';
 import MenuScreen from './MenuScreen';
 import InventoryScreen from './InventoryScreen';
+import PhotoCameraScreen from './CameraScreen';
+import PickImageScreen from './PickImageScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -24,6 +26,8 @@ function TabNavigator() {
             iconName = 'heart';
           } else if (route.name === 'Inventory') {
             iconName = 'menu';
+          } else if (route.name === 'Camera') {
+              iconName = 'camera';
           }
           // You can return any component that you like here!
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -36,6 +40,7 @@ function TabNavigator() {
       <Tab.Screen name="Home" component={HomeScreen} />
       {/* <Tab.Screen name="Menu" component={MenuScreen} /> */}
       <Tab.Screen name="Inventory" component={InventoryScreen} />
+      <Tab.Screen name="Camera" component={PickImageScreen} />
       <Tab.Screen name="Details" component={DetailsScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
