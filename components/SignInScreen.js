@@ -12,6 +12,7 @@ import {AuthContext} from '../App';
 import {BackgroundImage} from '../images';
 
 const screenWidth = Dimensions.get('screen').width;
+const screenHeight = Dimensions.get('screen').height;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -38,13 +39,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgb(255, 231, 175)',
     borderRadius: 15,
     borderWidth: 1,
-    paddingHorizontal: 135,
+    paddingHorizontal: screenWidth * 0.35,
     paddingVertical: 10,
     marginTop: 20,
   },
   backgroudImage: {
-    width: 400,
-    height: 300,
+    width: screenWidth,
+    height: screenHeight * 0.3,
     marginTop: -300,
   },
   foodInfo: {

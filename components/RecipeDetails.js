@@ -1,9 +1,18 @@
 import * as React from 'react';
-import {View, Image, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
 import {RecipeDetailsImage} from '../images';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import StarRating from 'react-native-star-rating';
 
+const screenWidth = Dimensions.get('screen').width;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -12,11 +21,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgb(242, 243, 237)',
   },
   backgroudImage: {
-    width: 400,
-    height: 300,
+    width: screenWidth,
+    height: 200,
   },
   backButton: {
-    marginTop: -250,
+    marginTop: -120,
     zIndex: 10,
     marginLeft: 30,
     width: 50,
@@ -26,13 +35,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgb(143, 126,110)',
   },
   foodInfo: {
-    marginTop: 150,
+    marginTop: 20,
     zIndex: 10,
     alignSelf: 'stretch',
     height: 100,
     marginHorizontal: 30,
     alignItems: 'center',
-    backgroundColor: 'rgb(250, 250, 250)',
+    backgroundColor: 'rgb(255, 255, 255)',
     borderRadius: 15,
   },
   foodName: {
@@ -45,11 +54,20 @@ const styles = StyleSheet.create({
   },
   collect: {
     alignItems: 'center',
-    backgroundColor: 'rgb(250, 250, 250)',
+    backgroundColor: 'rgb(255, 255, 255)',
     borderRadius: 15,
     paddingHorizontal: 20,
     paddingVertical: 10,
     marginLeft: 30,
+  },
+  toolsInfo: {
+    marginTop: 20,
+    zIndex: 10,
+    alignSelf: 'stretch',
+    height: 250,
+    marginHorizontal: 30,
+    backgroundColor: 'rgb(255, 255, 255)',
+    borderRadius: 15,
   },
 });
 
@@ -84,7 +102,43 @@ function RecipeDetails({navigation}) {
         </View>
       </View>
 
-      <View></View>
+      <View style={styles.toolsInfo}>
+        <View style={{marginLeft: 30}}>
+          <View style={{flexDirection: 'row', marginTop: 20}}>
+            <FontAwesome5Icon name="utensils" size={20} />
+            <Text style={{fontSize: 18, fontWeight: '400', marginLeft: 20}}>
+              Utentils
+            </Text>
+          </View>
+          <Text style={{marginTop: 20, marginHorizontal: 10}}>
+            Cutting Board, Knife, 2 bowls, Cooking spoon, Towels
+          </Text>
+          <View style={{flexDirection: 'row', marginTop: 20}}>
+            <Ionicons name="fast-food" size={20} />
+            <Text style={{fontSize: 18, fontWeight: '400', marginLeft: 20}}>
+              Nutrition Per Serving
+            </Text>
+          </View>
+          <View style={{flexDirection: 'row'}}>
+            <View style={{marginTop: 20, marginHorizontal: 15}}>
+              <Text>Cal</Text>
+              <Text>30g</Text>
+            </View>
+            <View style={{marginTop: 20, marginHorizontal: 15}}>
+              <Text>Cal</Text>
+              <Text>30g</Text>
+            </View>
+            <View style={{marginTop: 20, marginHorizontal: 15}}>
+              <Text>Cal</Text>
+              <Text>30g</Text>
+            </View>
+            <View style={{marginTop: 20, marginHorizontal: 15}}>
+              <Text>Cal</Text>
+              <Text>30g</Text>
+            </View>
+          </View>
+        </View>
+      </View>
 
       <View style={{flexDirection: 'row'}}>
         <TouchableOpacity style={styles.collect}>
