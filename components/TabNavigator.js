@@ -6,7 +6,6 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import ProfileScreen from './ProfileScreen';
 import MenuScreen from './MenuScreen';
 import InventoryScreen from './InventoryScreen';
-import PhotoCameraScreen from './CameraScreen';
 import PickImageScreen from './PickImageScreen';
 
 const Tab = createBottomTabNavigator();

@@ -1,5 +1,7 @@
 import React, { Fragment, Component } from 'react';
-import * as ImagePicker from 'react-native-image-picker';
+// import * as ImagePicker from 'react-native-image-picker';
+import ImagePicker, {launchImageLibrary, launchCamera} from 'react-native-image-picker';
+
 import {
   SafeAreaView,
   StyleSheet,
@@ -43,51 +45,14 @@ export default class PickImageScreen extends Component {
     }
   }
 
-  chooseImage = () => {
-    let options = {
-      title: 'Select Image',
-      customButtons: [
-        { name: 'customOptionKey', title: 'Choose Photo from Custom Option' },
-      ],
-      storageOptions: {
-        skipBackup: true,
-        path: 'images',
-      },
-    };
-    ImagePicker.showImagePicker(options, (response) => {
-      console.log('Response = ', response);
-
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
-        alert(response.customButton);
-      } else {
-        const source = { uri: response.uri };
-
-        // You can also display the image using data:
-        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-        // alert(JSON.stringify(response));s
-        console.log('response', JSON.stringify(response));
-        this.setState({
-          filePath: response,
-          fileData: response.data,
-          fileUri: response.uri
-        });
-      }
-    });
-  }
-
-  launchCamera = () => {
+  openCamera = () => {
     let options = {
       storageOptions: {
         skipBackup: true,
         path: 'images',
       },
     };
-    ImagePicker.launchCamera(options, (response) => {
+    launchCamera(options, (response) => {
       console.log('Response = ', response);
 
       if (response.didCancel) {
@@ -110,14 +75,14 @@ export default class PickImageScreen extends Component {
 
   }
 
-  launchImageLibrary = () => {
+  openImageLibrary = () => {
     let options = {
       storageOptions: {
         skipBackup: true,
         path: 'images',
       },
     };
-    ImagePicker.launchImageLibrary(options, (response) => {
+    launchImageLibrary(options, (response) => {
       console.log('Response = ', response);
 
       if (response.didCancel) {
@@ -142,7 +107,7 @@ export default class PickImageScreen extends Component {
 
   renderFileData() {
     if (this.state.fileData) {
-      return <Image source={{ uri: 'data:image/jpeg;base64,' + this.state.fileData }}
+      return <Image source={{ uri: 'data:image/jpeg;base64,' + this.state.filePath }}
         style={styles.images}
       />
     } else {
@@ -155,7 +120,7 @@ export default class PickImageScreen extends Component {
   renderFileUri() {
     if (this.state.fileUri) {
       return <Image
-        source={{ uri: this.state.fileUri }}
+        source={{ uri: this.state.filePath }}
         style={styles.images}
       />
     } else {
@@ -184,15 +149,12 @@ export default class PickImageScreen extends Component {
             </View>
 
             <View style={styles.btnParentSection}>
-              <TouchableOpacity onPress={this.chooseImage} style={styles.btnSection}  >
-                <Text style={styles.btnText}>Choose File</Text>
-              </TouchableOpacity>
 
-              <TouchableOpacity onPress={this.launchCamera} style={styles.btnSection}  >
+              <TouchableOpacity onPress={this.openCamera} style={styles.btnSection}  >
                 <Text style={styles.btnText}>Directly Launch Camera</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={this.launchImageLibrary} style={styles.btnSection}  >
+              <TouchableOpacity onPress={this.openImageLibrary} style={styles.btnSection}  >
                 <Text style={styles.btnText}>Directly Launch Image Library</Text>
               </TouchableOpacity>
             </View>
