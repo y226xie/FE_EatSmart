@@ -202,7 +202,9 @@ function RecipeDetails({navigation}) {
         <TouchableOpacity style={styles.collect}>
           <Ionicons name="heart-outline" size={30} color="black" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.cookingBtn}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('CookingSteps')}
+          style={styles.cookingBtn}>
           <Text style={{fontSize: 15}}>Start Cooking</Text>
         </TouchableOpacity>
       </View>
