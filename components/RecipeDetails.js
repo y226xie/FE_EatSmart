@@ -7,12 +7,15 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
+import {DataTable, Card} from 'react-native-paper';
 import {RecipeDetailsImage} from '../images';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import StarRating from 'react-native-star-rating';
 
 const screenWidth = Dimensions.get('screen').width;
+const screenHeight = Dimensions.get('screen').height;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -59,17 +62,45 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     marginLeft: 30,
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOpacity: 0.8,
+    shadowRadius: 15,
+    shadowOffset: {width: 1, height: 13},
   },
   toolsInfo: {
     marginTop: 20,
     zIndex: 10,
     alignSelf: 'stretch',
-    height: 250,
+    height: screenHeight * 0.26,
     marginHorizontal: 30,
     backgroundColor: 'rgb(255, 255, 255)',
     borderRadius: 15,
   },
+  ingredients: {
+    marginLeft: 30,
+    marginTop: 20,
+  },
+  ingredientList: {
+    width: screenWidth * 0.85,
+    marginVertical: 10,
+  },
+  cookingBtn: {
+    justifyContent: 'center',
+    backgroundColor: 'rgb(255, 231, 175)',
+    borderRadius: 15,
+    marginLeft: 30,
+    borderWidth: 1,
+    paddingHorizontal: 65,
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOpacity: 0.8,
+    shadowRadius: 15,
+    shadowOffset: {width: 1, height: 13},
+  },
 });
+const stock_items = [
+  {name: 'Yogurt', weight: '500g', expiry: '1 week'},
+  {name: 'Beef', weight: '1 box', expiry: '1 week'},
+];
 
 function RecipeDetails({navigation}) {
   return (
@@ -120,39 +151,58 @@ function RecipeDetails({navigation}) {
             </Text>
           </View>
           <View style={{flexDirection: 'row'}}>
-            <View style={{marginTop: 20, marginHorizontal: 15}}>
+            <View style={{marginTop: 20, marginHorizontal: 20}}>
               <Text>Cal</Text>
-              <Text>30g</Text>
+              <Text style={{marginTop: 10}}>433</Text>
             </View>
-            <View style={{marginTop: 20, marginHorizontal: 15}}>
-              <Text>Cal</Text>
-              <Text>30g</Text>
+            <View style={{marginTop: 20, marginHorizontal: 20}}>
+              <Text>Fat</Text>
+              <Text style={{marginTop: 10}}>10g</Text>
             </View>
-            <View style={{marginTop: 20, marginHorizontal: 15}}>
-              <Text>Cal</Text>
-              <Text>30g</Text>
+            <View style={{marginTop: 20, marginHorizontal: 20}}>
+              <Text>Carb</Text>
+              <Text style={{marginTop: 10}}>20g</Text>
             </View>
-            <View style={{marginTop: 20, marginHorizontal: 15}}>
-              <Text>Cal</Text>
-              <Text>30g</Text>
+            <View style={{marginTop: 20, marginHorizontal: 20}}>
+              <Text>Protein</Text>
+              <Text style={{marginTop: 10}}>30g</Text>
             </View>
           </View>
         </View>
+      </View>
+
+      <View style={styles.ingredients}>
+        <Text style={{fontSize: 18, fontWeight: '500'}}>
+          Required Ingredients
+        </Text>
+
+        <Card style={styles.ingredientList}>
+          <DataTable color="black">
+            <DataTable.Header>
+              <DataTable.Title>Ingredient Name</DataTable.Title>
+              <DataTable.Title numeric>Amount</DataTable.Title>
+              <DataTable.Title numeric>Current</DataTable.Title>
+            </DataTable.Header>
+            <DataTable.Row>
+              <DataTable.Cell>Frozen yogurt</DataTable.Cell>
+              <DataTable.Cell numeric>159</DataTable.Cell>
+              <DataTable.Cell numeric>6.0</DataTable.Cell>
+            </DataTable.Row>
+
+            <DataTable.Row>
+              <DataTable.Cell>Ice cream sandwich</DataTable.Cell>
+              <DataTable.Cell numeric>237</DataTable.Cell>
+              <DataTable.Cell numeric>8.0</DataTable.Cell>
+            </DataTable.Row>
+          </DataTable>
+        </Card>
       </View>
 
       <View style={{flexDirection: 'row'}}>
         <TouchableOpacity style={styles.collect}>
           <Ionicons name="heart-outline" size={30} color="black" />
         </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            justifyContent: 'center',
-            backgroundColor: 'rgb(255, 231, 175)',
-            borderRadius: 15,
-            marginLeft: 30,
-            borderWidth: 1,
-            paddingHorizontal: 65,
-          }}>
+        <TouchableOpacity style={styles.cookingBtn}>
           <Text style={{fontSize: 15}}>Start Cooking</Text>
         </TouchableOpacity>
       </View>
