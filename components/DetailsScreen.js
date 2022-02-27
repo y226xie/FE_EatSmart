@@ -1,22 +1,77 @@
-import * as React from 'react';
+import React, {Component} from 'react';
 import {Button, View, Text} from 'react-native';
+import SearchFilterView from './searchFilterView';
 
-function DetailsScreen({navigation}) {
-  return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <Text>Details Screen</Text>
-      <Button
-        title="Go to Details... again"
-        onPress={() => navigation.push('Details')}
-      />
-      <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
-      <Button title="Go back" onPress={() => navigation.goBack()} />
-      <Button
-        title="Go back to first screen in stack"
-        onPress={() => navigation.popToTop()}
-      />
-    </View>
-  );
+const test = [{
+  "id": 1,
+  "title": "apple"
+}, 
+{
+  "id": 2,
+  "title": "banana"
+},
+{
+  "id": 3,
+  "title": "chicken legs"
+},
+{
+  "id": 4,
+  "title": "chicken breasts"
+},
+{
+  "id": 5,
+  "title": "chicken wings"
+}]
+
+export default class DetailsScreen extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      data: [],
+      cuisinesFilter: new Set(),
+      dietsFilter: [],
+      intolerancesFilter: [],
+      mealTylesFilter: [],
+      includeIngredients: "",
+      maxColories: ""
+    };
+  }
+
+  addCuisines = async (item) => {
+    oldSelectedItem = this.state.cuisinesFilter
+    oldSelectedItem.add(item)
+    this.setState({
+      cuisinesFilter: oldSelectedItem
+    });
+  }
+
+  removeCuisines = async (item) => {
+    oldSelectedItem = this.state.cuisinesFilter
+    oldSelectedItem.delete(item)
+    this.setState({
+      cuisinesFilter: oldSelectedItem
+    })
+  }
+  
+  getRecipes = async () => {
+  }
+
+  render() {
+    const cuisines = ["african", "american", "british", "cajun", "caribbean", "chinese", "eastern european", "european", "french", "german", "greek", "indian", "irish", "italian", "japanese", "jewish", "korean", "mediterranean", "mexican", "nordic", "spanish", "thai", "vietnamese"];
+    const diets = ["Gluten Free", "Ketogenic", "Vegetarian", "Lacto-Vegetarian", "Ovo-Vegetarian", "Vegan", "Pescetarian", "Paleo"];
+    const intolerances = ["Dairy", "Egg", "Gluten", "Grain", "Peanut", "Seafood", "Sesame", "Shellfish", "Soy", "Sulfite", "Tree Nut", "Wheat"];
+    const mealTypes = ["main course", "side dish", "dessert", "appetizer", "salad", "bread", "breakfast", "soup", "beverage", "sauce", "marinade", "fingerfood", "snack", "drink"];    
+    console.log(this.state.cuisinesFilter)
+    return (
+      <SearchFilterView data={cuisines} selectedItems={this.state.cuisinesFilter} addCuisines={this.addCuisines} removeCuisines={this.removeCuisines}/>
+    )
+  }
 }
 
-export default DetailsScreen;
+// export default function DetailsScreen({navigation}) {
+//   return (
+//     <SearchFilterView data={test}/>
+//   );
+// }
+
