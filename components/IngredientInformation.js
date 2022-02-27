@@ -97,7 +97,6 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginRight: 20,
   },
-
   tag: {
     backgroundColor: '#FDE7B6',
     marginLeft: 10,
@@ -121,7 +120,7 @@ export function IngredientInformation({onChange, ingredient}) {
     try {
       const userToken = await Keychain.getGenericPassword();
       const response = await fetch(
-        'http://192.168.0.101:4000/storage/ingredient/' + ingredient._id,
+        'http://192.168.2.28:4000/storage/ingredient/' + ingredient._id,
         {
           method: 'DELETE',
           headers: {
