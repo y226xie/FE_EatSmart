@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     height: 100,
     marginHorizontal: 30,
     alignItems: 'center',
-    backgroundColor: 'rgb(255, 255, 255)',
+    backgroundColor: '#FAFAF8',
     borderRadius: 15,
   },
   foodName: {
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   },
   collect: {
     alignItems: 'center',
-    backgroundColor: 'rgb(255, 255, 255)',
+    backgroundColor: '#FAFAF8',
     borderRadius: 15,
     paddingHorizontal: 20,
     paddingVertical: 10,
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     height: screenHeight * 0.26,
     marginHorizontal: 30,
-    backgroundColor: 'rgb(255, 255, 255)',
+    backgroundColor: '#FAFAF8',
     borderRadius: 15,
   },
   ingredients: {
