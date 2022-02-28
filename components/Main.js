@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   ScrollView,
   View,
@@ -6,11 +6,13 @@ import {
   StyleSheet,
   Button,
   Dimensions,
+  ActivityIndicator
 } from 'react-native';
 import {SearchBar} from 'react-native-elements';
 import RecipeRecommendation from '../utils/RecipeRecommendation';
 import {Card} from 'react-native-paper';
 import CurrentStock from '../utils/CurrentStock';
+import * as Keychain from 'react-native-keychain';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
@@ -54,14 +56,36 @@ const stock_items = [
 ];
 function Main({navigation}) {
   const [search, setSearch] = useState('');
+  const [status, setStatus] = useState({pending: true, recommendations: []});
+
 
   const updateSearch = search => {
     setSearch(search);
   };
 
+  useEffect(() => {
+    setStatus({pending: true, recommendations: []})
+    Keychain.getGenericPassword()
+    .then(userToken => {
+      fetch('http://localhost:4000/meal/recipeByIngredient',
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${userToken.password}`,
+        }
+      })
+      .then(resp => resp.json())
+      .then(data => setStatus({pending:false, recommendations: data.message}))
+    })
+  }, [])
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.appArea}>
+        {status.pending ? (
+          <ActivityIndicator />
+        ):(
+        <>
         <View>
           <Text style={styles.title}>Welcome Back!</Text>
           <Text style={styles.userName}>Fuhai!</Text>
@@ -92,15 +116,19 @@ function Main({navigation}) {
           <View style={styles.horizontal}>
             <RecipeRecommendation
               onPress={() => navigation.navigate('RecipeDetails')}
-              foodName="Pasta"
-              difficulity="Medium"
-              foodImageUrl="https://picsum.photos/700"
+              foodName={status.recommendations[0].title}
+              // difficulity="Medium"
+              foodImageUrl={status.recommendations[0].image}
+              // foodName="Pasta"
+              // foodImageUrl="https://picsum.photos/700"
             />
             <RecipeRecommendation
               onPress={() => navigation.navigate('RecipeDetails')}
-              foodName="Noodle"
-              difficulity="Hard"
-              foodImageUrl="https://picsum.photos/700"
+              foodName={status.recommendations[1].title}
+              foodImageUrl={status.recommendations[1].image}
+              // foodName="Noodle"
+              // difficulity="Hard"
+              // foodImageUrl="https://picsum.photos/700"
             />
           </View>
         </View>
@@ -110,6 +138,8 @@ function Main({navigation}) {
             <CurrentStock items={stock_items} />
           </Card>
         </View>
+        </>
+        )}
       </View>
     </ScrollView>
   );
