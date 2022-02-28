@@ -1,12 +1,12 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import HomeScreen from './HomeScreen';
-import DetailsScreen from './DetailsScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ProfileScreen from './ProfileScreen';
 import MenuScreen from './MenuScreen';
 import {InventoryScreen} from './InventoryScreen';
 import PickImageScreen from './PickImageScreen';
+import RecipeNavigation from './RecipeNavigation';
 
 const Tab = createBottomTabNavigator();
 
@@ -21,7 +21,7 @@ function TabNavigator() {
             iconName = 'home';
           } else if (route.name === 'Profile') {
             iconName = 'settings';
-          } else if (route.name === 'Details') {
+          } else if (route.name === 'Recipe') {
             iconName = 'heart';
           } else if (route.name === 'Inventory') {
             iconName = 'menu';
@@ -40,7 +40,7 @@ function TabNavigator() {
       {/* <Tab.Screen name="Menu" component={MenuScreen} /> */}
       <Tab.Screen name="Inventory" component={InventoryScreen} />
       <Tab.Screen name="Camera" component={PickImageScreen} />
-      <Tab.Screen name="Details" component={DetailsScreen} />
+      <Tab.Screen name="Recipe" component={RecipeNavigation} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );

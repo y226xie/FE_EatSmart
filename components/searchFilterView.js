@@ -20,7 +20,6 @@ export default function SearchFilterView(props) {
   const [search, setSearch] = useState('');
   const [filteredDataSource, setFilteredDataSource] = useState(props.data);
   const [isFocused, setFocus] = useState(false)
-  const [selectedItems, setSelectedItems] = useState([])
 
   const searchFilterFunction = (text) => {
     if (text) {
@@ -43,7 +42,7 @@ export default function SearchFilterView(props) {
       // Flat List Item
       <Text
         style={styles.itemStyle}
-        onPress={() => props.addCuisines(item)}>
+        onPress={() => props.pushItem(item)}>
         {item.toLowerCase()}
       </Text>
     );
@@ -99,7 +98,7 @@ export default function SearchFilterView(props) {
                 {item}
             </Text>
             <TouchableOpacity
-                onPress={()=> props.removeCuisines(item)}
+                onPress={()=> props.popItem(item)}
             >
                 <Icon
                 name="close-circle"
@@ -117,7 +116,6 @@ export default function SearchFilterView(props) {
   }
 
   return (
-    <SafeAreaView style={{flex: 1}}>
 
       <View style={styles.container}>
       {/* <ScrollView > */}
@@ -142,6 +140,7 @@ export default function SearchFilterView(props) {
         </View>
         {isFocused ? (
         <FlatList
+          nestedScrollEnabled
           data={filteredDataSource}
           keyExtractor={(item, index) => index.toString()}
           ItemSeparatorComponent={ItemSeparatorView}
@@ -151,13 +150,13 @@ export default function SearchFilterView(props) {
         {/* </ScrollView> */}
 
       </View>
-    </SafeAreaView>
   )
 };
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
+    height: 300
   },
   itemStyle: {
     padding: 10,

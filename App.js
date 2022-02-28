@@ -67,7 +67,7 @@ export default function App() {
     () => ({
       signIn: async data => {
         try {
-          const response = await fetch('http://192.168.2.28:4000/auth/login', {
+          const response = await fetch('http://localhost:4000/auth/login', {
             method: 'POST',
             headers: {
               'Content-Type': `application/json`,

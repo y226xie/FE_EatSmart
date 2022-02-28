@@ -137,7 +137,7 @@ export function InventoryScreen() {
     try {
       setIsLoading(true);
       const response = await fetch(
-        'http://192.168.2.28:4000/storage/ingredients',
+        'http://localhost:4000/storage/ingredients',
         {
           headers: {
             Authorization: `Bearer ${userToken.password}`,
