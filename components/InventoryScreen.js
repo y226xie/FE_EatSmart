@@ -111,7 +111,7 @@ export function InventoryScreen() {
         amount: quantity,
       });
       const response = await fetch(
-        'http://192.168.2.28:4000/storage/ingredient/' + ingredient._id,
+        'http://localhost:4000/storage/ingredient/' + ingredient._id,
         {
           method: 'PUT',
           headers: {

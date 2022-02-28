@@ -49,15 +49,26 @@ export default function App() {
         if (userToken === false) {
           userToken = null;
         }
+        if (userToken != null) {
+          response = await fetch('http://localhost:4000/auth/user', 
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${userToken.password}`,
+            }
+          })
+
+          json = await response.json();
+          if (json.msg === "Token has expired") {
+            userToken = null;
+          }
+        }
+        dispatch({type: 'RESTORE_TOKEN', token: userToken});
+        
       } catch (e) {
+        console.log(e)
         // Restoring token failed
       }
-
-      // After restoring token, we may need to validate it in production apps
-
-      // This will switch to the App screen or Auth screen and this loading
-      // screen will be unmounted and thrown away.
-      dispatch({type: 'RESTORE_TOKEN', token: userToken});
     };
 
     bootstrapAsync();
