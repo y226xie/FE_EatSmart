@@ -57,16 +57,48 @@ const stock_items = [
 function Main({navigation}) {
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState({pending: true, recommendations: []});
+  const [ingredients, setIngredients] = useState({'page': 0, 'items': []});
+  const [totalPage, setTotalPage] = useState(0);
 
 
   const updateSearch = search => {
     setSearch(search);
   };
 
+  const getIngredientsPageNumber = (userToken) => {
+    fetch(`http://localhost:4000/storage/pageNumber`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${userToken.password}`,
+      }
+    })
+    .then(resp => resp.json())
+    .then(data => setTotalPage(data.message))
+  }
+
+  const getIngredients = (userToken, currPage) => {
+    fetch(`http://localhost:4000/storage/ingredients?page=${currPage}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${userToken.password}`,
+        }
+      })
+      .then(resp => resp.json())
+      .then(data => setIngredients({'page': currPage, 'items': data.message}))
+  }
+
+  const handlePageChange = async (currPage) => {
+    userToken = await Keychain.getGenericPassword();
+    getIngredients(userToken, currPage);
+  }
+
   useEffect(() => {
     setStatus({pending: true, recommendations: []})
     Keychain.getGenericPassword()
     .then(userToken => {
+      getIngredientsPageNumber(userToken);
+      getIngredients(userToken, 0);
+
       fetch('http://localhost:4000/meal/recipeByIngredient',
       {
         method: 'GET',
@@ -135,7 +167,7 @@ function Main({navigation}) {
         <View styles={styles.elementMargin}>
           <Text style={styles.headerText}>Current Stock</Text>
           <Card style={{marginHorizontal: 10, borderRadius: 5}}>
-            <CurrentStock items={stock_items} />
+            <CurrentStock ingredients={ingredients} totalPage={totalPage} handlePageChange={(page) => handlePageChange(page)}/>
           </Card>
         </View>
         </>
