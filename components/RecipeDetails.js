@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Image,
@@ -6,12 +6,14 @@ import {
   Text,
   TouchableOpacity,
   Dimensions,
+  ActivityIndicator
 } from 'react-native';
 import {DataTable, Card} from 'react-native-paper';
 import {RecipeDetailsImage} from '../images';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import StarRating from 'react-native-star-rating';
+import * as Keychain from 'react-native-keychain';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
@@ -97,14 +99,106 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 1, height: 13},
   },
 });
-const stock_items = [
-  {name: 'Yogurt', weight: '500g', expiry: '1 week'},
-  {name: 'Beef', weight: '1 box', expiry: '1 week'},
-];
 
-function RecipeDetails({navigation}) {
+function RecipeDetails({route, navigation}) {
+
+  const [recipeData, setrecipeData] = useState({
+    pending: true,
+    information: {
+      title: "",
+      ingredients: [],
+      readyInMinutes: 0,
+      instructions: []
+    },
+  });
+  const [nutrition, setNutrition] = useState({});
+
+  const getIngredientAmount = async (userToken, ingredient) => {
+      response = await fetch(`http://localhost:4000/storage/ingredient/${ingredient}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${userToken.password}`,
+      }
+    })
+    data = await response.json();
+    return data.message.reduce((partialSum, a) => partialSum + a.amount, 0);
+  }
+
+  const getRecipeInformation = async (userToken, recipeID) => {
+    response = await fetch(`http://localhost:4000/meal/recipe/${recipeID}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${userToken.password}`,
+      }
+    })
+    data = await response.json();
+    let information = {
+      title: data.message.title,
+      ingredients: [],
+      readyInMinutes: data.message.readyInMinutes,
+      instructions: data.message.analyzedInstructions[0].steps
+    };
+    // for (var i=0; i<data.message.extendedIngredients.length; i++) {
+    // await data.message.extendedIngredients.forEach( (item) => {
+    for (const item of data.message.extendedIngredients) {
+
+      amountOwned = await getIngredientAmount(userToken, item.name);
+
+      let ingredient = {
+        name: item.name,
+        targetAmount: item.amount,
+        unit: item.unit,
+        currentAmount: amountOwned
+      }
+
+      information.ingredients.push(ingredient)
+    }
+    setrecipeData({
+      pending: false,
+      information: information
+    })
+  }
+
+  const parseNutrition = (data) => {
+    const parsedNutrition = {
+      cal: data.bad[0].amount,
+      fat: data.bad[1].amount,
+      carb: data.bad[2].amount,
+      sugar: data.bad[3].amount,
+      protein: data.good[0].amount
+    };
+
+    return parsedNutrition;
+  }
+
+  const getRecipeNutrition = (userToken, recipeID) => {
+    console.log(recipeID)
+    fetch(`http://localhost:4000/meal/recipe/${recipeID}/nutrition`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${userToken.password}`,
+      }
+    })
+    .then(resp => resp.json())
+    .then(data => setNutrition(parseNutrition(data.message)))
+  }
+
+  useEffect(() => {
+    const recipeID = route.params.recipeID
+    setrecipeData({pending: true})
+    Keychain.getGenericPassword()
+    .then(userToken => {
+      getRecipeNutrition(userToken, recipeID);
+      getRecipeInformation(userToken, recipeID);
+    })
+  }, [])
+
   return (
     <View style={styles.container}>
+      {recipeData.pending ? (
+          <ActivityIndicator />
+        ):(
+        <>
       <View>
         <Image style={styles.backgroudImage} source={RecipeDetailsImage} />
         <TouchableOpacity
@@ -116,7 +210,7 @@ function RecipeDetails({navigation}) {
 
       <View style={styles.foodInfo}>
         <View style={{flexDirection: 'row'}}>
-          <Text style={styles.foodName}>Noodles</Text>
+          <Text style={styles.foodName}>{recipeData.information.title}</Text>
           <View style={{marginTop: 25, marginLeft: 20, flexDirection: 'row'}}>
             <StarRating
               disabled={true}
@@ -129,7 +223,7 @@ function RecipeDetails({navigation}) {
         </View>
         <View style={{flexDirection: 'row', marginTop: 20}}>
           <Text> Difficulity: Easy </Text>
-          <Text> Time: 20 mins</Text>
+          <Text> Time: {recipeData.information.readyInMinutes} mins</Text>
         </View>
       </View>
 
@@ -153,19 +247,19 @@ function RecipeDetails({navigation}) {
           <View style={{flexDirection: 'row'}}>
             <View style={{marginTop: 20, marginHorizontal: 20}}>
               <Text>Cal</Text>
-              <Text style={{marginTop: 10}}>433</Text>
+              <Text style={{marginTop: 10}}>{nutrition.cal}</Text>
             </View>
             <View style={{marginTop: 20, marginHorizontal: 20}}>
               <Text>Fat</Text>
-              <Text style={{marginTop: 10}}>10g</Text>
+              <Text style={{marginTop: 10}}>{nutrition.fat}</Text>
             </View>
             <View style={{marginTop: 20, marginHorizontal: 20}}>
               <Text>Carb</Text>
-              <Text style={{marginTop: 10}}>20g</Text>
+              <Text style={{marginTop: 10}}>{nutrition.carb}</Text>
             </View>
             <View style={{marginTop: 20, marginHorizontal: 20}}>
               <Text>Protein</Text>
-              <Text style={{marginTop: 10}}>30g</Text>
+              <Text style={{marginTop: 10}}>{nutrition.protein}</Text>
             </View>
           </View>
         </View>
@@ -183,17 +277,17 @@ function RecipeDetails({navigation}) {
               <DataTable.Title numeric>Amount</DataTable.Title>
               <DataTable.Title numeric>Current</DataTable.Title>
             </DataTable.Header>
-            <DataTable.Row>
-              <DataTable.Cell>Frozen yogurt</DataTable.Cell>
-              <DataTable.Cell numeric>159</DataTable.Cell>
-              <DataTable.Cell numeric>6.0</DataTable.Cell>
-            </DataTable.Row>
-
-            <DataTable.Row>
-              <DataTable.Cell>Ice cream sandwich</DataTable.Cell>
-              <DataTable.Cell numeric>237</DataTable.Cell>
-              <DataTable.Cell numeric>8.0</DataTable.Cell>
-            </DataTable.Row>
+            {recipeData.information.ingredients.map((item) => {
+              return (
+                <View key={item.name}>
+                <DataTable.Row>
+                  <DataTable.Cell>{item.name}</DataTable.Cell>
+                  <DataTable.Cell>{item.targetAmount} {item.unit}</DataTable.Cell>
+                  <DataTable.Cell numeric>{item.currentAmount}</DataTable.Cell>
+                </DataTable.Row>
+                </View>
+              );
+            })}
           </DataTable>
         </Card>
       </View>
@@ -203,11 +297,16 @@ function RecipeDetails({navigation}) {
           <Ionicons name="heart-outline" size={30} color="black" />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate('CookingSteps')}
+          onPress={() => navigation.navigate({
+            name: 'CookingSteps',
+            params: {instructions: recipeData.information.instructions}
+          })}
           style={styles.cookingBtn}>
           <Text style={{fontSize: 15}}>Start Cooking</Text>
         </TouchableOpacity>
       </View>
+      </>
+        )}
     </View>
   );
 }

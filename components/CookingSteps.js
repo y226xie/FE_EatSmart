@@ -64,20 +64,23 @@ const styles = StyleSheet.create({
   },
 });
 
-const steps = [
-  {description: 'Heat the oil in a skillet over medium heat'},
-  {description: 'Add the garlic and 3 spring onions and cook for 2-3 mins'},
-  {description: 'Add the garlic and 3 spring onions and cook for 2-3 mins'},
-  {description: 'Add the garlic and 3 spring onions and cook for 2-3 mins'},
-  {description: 'Add the carrots and other ingredients'},
-];
-let cookingSteps = steps.map((step, index) => {
-  return (
-    <Steps currentStep={index + 1} key={index} description={step.description} />
-  );
-});
+// const steps = [
+//   {description: 'Heat the oil in a skillet over medium heat'},
+//   {description: 'Add the garlic and 3 spring onions and cook for 2-3 mins'},
+//   {description: 'Add the garlic and 3 spring onions and cook for 2-3 mins'},
+//   {description: 'Add the garlic and 3 spring onions and cook for 2-3 mins'},
+//   {description: 'Add the carrots and other ingredients'},
+// ];
+// let cookingSteps = instructions.map((step, index) => {
+//   return (
+//     <Steps currentStep={index + 1} key={index} description={step.step} />
+//   );
+// });
 
-function CookingSteps({navigation}) {
+function CookingSteps({route, navigation}) {
+  
+  const instructions = route.params.instructions;
+  console.log(instructions)
   return (
     <View style={styles.container}>
       <View>
@@ -110,7 +113,11 @@ function CookingSteps({navigation}) {
 
       <ScrollView>
         <Text style={styles.cookingStepsText}>Cooking Steps</Text>
-        {cookingSteps}
+        {instructions.map((step, index) => {
+          return (
+            <Steps currentStep={index + 1} key={index} description={step.step} />
+          );
+        })}
       </ScrollView>
     </View>
   );

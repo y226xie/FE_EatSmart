@@ -17,11 +17,17 @@ function HomeScreen({navigation}) {
       <Stack.Screen
         name="RecipeDetails"
         component={RecipeDetails}
+        initialParams={{
+          recipeID:""
+        }}
         options={{headerShown: false}}
       />
       <Stack.Screen
         name="CookingSteps"
         component={CookingSteps}
+        initialParams= {{
+          instructions: []
+        }}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

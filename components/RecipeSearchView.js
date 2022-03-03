@@ -104,7 +104,6 @@ export default class RecipeSearchView extends Component {
       },
     );
     json = await response.json();
-    console.log("@@@@@@@@")
     console.log(json.message);
     this.props.navigation.navigate({
       name: "RecipeDisplay",

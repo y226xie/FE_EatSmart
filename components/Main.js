@@ -147,7 +147,10 @@ function Main({navigation}) {
         <View style={styles.recipe}>
           <View style={styles.horizontal}>
             <RecipeRecommendation
-              onPress={() => navigation.navigate('RecipeDetails')}
+              onPress={() => navigation.navigate({
+                name: 'RecipeDetails',
+                params: {recipeID: status.recommendations[0].id}
+              })}
               foodName={status.recommendations[0].title}
               // difficulity="Medium"
               foodImageUrl={status.recommendations[0].image}
@@ -155,7 +158,10 @@ function Main({navigation}) {
               // foodImageUrl="https://picsum.photos/700"
             />
             <RecipeRecommendation
-              onPress={() => navigation.navigate('RecipeDetails')}
+              onPress={() => navigation.navigate({
+                name: 'RecipeDetails',
+                params: {recipeID: status.recommendations[1].id}
+              })}
               foodName={status.recommendations[1].title}
               foodImageUrl={status.recommendations[1].image}
               // foodName="Noodle"
