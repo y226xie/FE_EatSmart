@@ -65,7 +65,7 @@ function Main({navigation}) {
   };
 
   const getIngredientsPageNumber = userToken => {
-    fetch(`http://localhost:4000/storage/pageNumber`, {
+    fetch(`http://192.168.0.101:4000/storage/pageNumber`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${userToken.password}`,
@@ -76,7 +76,7 @@ function Main({navigation}) {
   };
 
   const getIngredients = (userToken, currPage) => {
-    fetch(`http://localhost:4000/storage/ingredients?page=${currPage}`, {
+    fetch(`http://192.168.0.101:4000/storage/ingredients?page=${currPage}`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${userToken.password}`,
@@ -97,7 +97,7 @@ function Main({navigation}) {
       getIngredientsPageNumber(userToken);
       getIngredients(userToken, 0);
 
-      fetch('http://localhost:4000/meal/recipeByIngredient', {
+      fetch('http://192.168.0.101:4000/meal/recipeByIngredient', {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${userToken.password}`,

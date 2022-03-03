@@ -112,7 +112,7 @@ export function InventoryScreen() {
         amount: quantity,
       });
       const response = await fetch(
-        'http://localhost:4000/storage/ingredient/' + ingredient._id,
+        'http://192.168.0.101:4000/storage/ingredient/' + ingredient._id,
         {
           method: 'PUT',
           headers: {
@@ -138,7 +138,7 @@ export function InventoryScreen() {
     try {
       setIsLoading(true);
       const response = await fetch(
-        'http://localhost:4000/storage/ingredients',
+        'http://192.168.0.101:4000/storage/ingredients',
         {
           headers: {
             Authorization: `Bearer ${userToken.password}`,

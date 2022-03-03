@@ -10,24 +10,22 @@ import {
   TextInput,
   Keyboard,
   TouchableOpacity,
-  ScrollView  
+  ScrollView,
+  Pressable,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-
 export default function SearchFilterView(props) {
-
   const [search, setSearch] = useState('');
   const [filteredDataSource, setFilteredDataSource] = useState(props.data);
-  const [isFocused, setFocus] = useState(false)
+  const [isFocused, setFocus] = useState(false);
 
-  const searchFilterFunction = (text) => {
+  const searchFilterFunction = text => {
     if (text) {
-      const newData = props.data.filter(
-        function (item) {
-          const itemData = item ? item.toLowerCase() : ''.toLowerCase();
-          const textData = text.toLowerCase();
-          return itemData.indexOf(textData) > -1;
+      const newData = props.data.filter(function (item) {
+        const itemData = item ? item.toLowerCase() : ''.toLowerCase();
+        const textData = text.toLowerCase();
+        return itemData.indexOf(textData) > -1;
       });
       setFilteredDataSource(newData);
       setSearch(text);
@@ -40,9 +38,7 @@ export default function SearchFilterView(props) {
   const ItemView = ({item}) => {
     return (
       // Flat List Item
-      <Text
-        style={styles.itemStyle}
-        onPress={() => props.pushItem(item)}>
+      <Text style={styles.itemStyle} onPress={() => props.pushItem(item)}>
         {item.toLowerCase()}
       </Text>
     );
@@ -71,74 +67,71 @@ export default function SearchFilterView(props) {
   // }
 
   const displaySelectedItems = () => {
-    return (
-      ([...props.selectedItems]).map((item, i) => {
-        return(
-          <View key={item}
-            style={[
+    return [...props.selectedItems].map((item, i) => {
+      return (
+        <View
+          key={item}
+          style={[
             styles.selectedItems,
             {
-                width: item.length * 8 + 60,
-                justifyContent: 'center',
-                height: 40,
-                borderColor: '#00A5FF'
+              width: item.length * 8 + 60,
+              justifyContent: 'center',
+              height: 40,
+              borderColor: '#00A5FF',
             },
+          ]}>
+          <Text
+            style={[
+              {
+                flex: 1,
+                color: '#00A5FF',
+                fontSize: 15,
+              },
             ]}
-        >
-            <Text
-                style={[
-                {
-                    flex: 1,
-                    color: '#00A5FF',
-                    fontSize: 15
-                },
-                ]}
-                numberOfLines={1}
-            >
-                {item}
-            </Text>
-            <TouchableOpacity
-                onPress={()=> props.popItem(item)}
-            >
-                <Icon
-                name="close-circle"
-                style={{
-                    color: '#C62828',
-                    fontSize: 22,
-                    marginLeft: 10
-                }}
-                />
-            </TouchableOpacity>
+            numberOfLines={1}>
+            {item}
+          </Text>
+          <TouchableOpacity onPress={() => props.popItem(item)}>
+            <Icon
+              name="close-circle"
+              style={{
+                color: '#C62828',
+                fontSize: 22,
+                marginLeft: 10,
+              }}
+            />
+          </TouchableOpacity>
         </View>
-        )
-      })
-    )
-  }
+      );
+    });
+  };
 
   return (
-
-      <View style={styles.container}>
+    <View style={styles.container}>
       {/* <ScrollView > */}
+      <TextInput
+        style={styles.textInputStyle}
+        onChangeText={text => searchFilterFunction(text)}
+        value={search}
+        // underlineColorAndroid="transparent"
+        placeholder="Search"
+        autoCapitalize="none"
+        autoCorrect={false}
+        onFocus={() => setFocus(true)}
+        onBlur={() => {
+          setTimeout(() => {
+            setFocus(false);
+          }, 800);
+        }}
+      />
 
-        <TextInput
-          style={styles.textInputStyle}
-          onChangeText={(text) => searchFilterFunction(text)}
-          value = {search}
-          // underlineColorAndroid="transparent"
-          placeholder="Search"
-          autoCapitalize="none"
-          autoCorrect={false}
-          onFocus={() => setFocus(true)}
-          onBlur={() => setFocus(false)}
-        />
-
-        <View style= {{flexDirection:'row', flexWrap: 'wrap'}}>
-          {/* {selectedItems.map((item, i) => {
+      <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+        {/* {selectedItems.map((item, i) => {
             {displaySelectedItem(item)}
           })} */}
-          {displaySelectedItems()}
-        </View>
-        {isFocused ? (
+        {displaySelectedItems()}
+      </View>
+      {isFocused ? (
         <FlatList
           nestedScrollEnabled
           data={filteredDataSource}
@@ -146,17 +139,18 @@ export default function SearchFilterView(props) {
           ItemSeparatorComponent={ItemSeparatorView}
           renderItem={ItemView}
         />
-    ):(<Text>test</Text>)} 
-        {/* </ScrollView> */}
-
-      </View>
-  )
-};
+      ) : (
+        <Text>test</Text>
+      )}
+      {/* </ScrollView> */}
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
-    height: 300
+    height: 300,
   },
   itemStyle: {
     padding: 10,
@@ -179,5 +173,5 @@ const styles = StyleSheet.create({
     margin: 3,
     borderRadius: 20,
     borderWidth: 2,
-  }
+  },
 });

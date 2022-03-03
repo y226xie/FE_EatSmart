@@ -50,23 +50,21 @@ export default function App() {
           userToken = null;
         }
         if (userToken != null) {
-          response = await fetch('http://localhost:4000/auth/user', 
-          {
+          response = await fetch('http://192.168.0.101:4000/auth/user', {
             method: 'GET',
             headers: {
               Authorization: `Bearer ${userToken.password}`,
-            }
-          })
+            },
+          });
 
           json = await response.json();
-          if (json.msg === "Token has expired") {
+          if (json.msg === 'Token has expired') {
             userToken = null;
           }
         }
         dispatch({type: 'RESTORE_TOKEN', token: userToken});
-        
       } catch (e) {
-        console.log(e)
+        console.log(e);
         // Restoring token failed
       }
     };
@@ -78,7 +76,7 @@ export default function App() {
     () => ({
       signIn: async data => {
         try {
-          const response = await fetch('http://localhost:4000/auth/login', {
+          const response = await fetch('http://192.168.0.101:4000/auth/login', {
             method: 'POST',
             headers: {
               'Content-Type': `application/json`,
