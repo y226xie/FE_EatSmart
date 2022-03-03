@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     borderRadius: 15,
     marginVertical: 5,
-    height: screenHeight * 0.13,
+    height: screenHeight * 0.15,
     shadowColor: 'rgba(0, 0, 0, 0.1)',
     shadowOpacity: 0.8,
     shadowRadius: 15,
@@ -92,8 +92,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   foodImage: {
-    width: 70,
-    height: 70,
+    width: screenWidth * 0.2,
+    height: screenHeight * 0.1,
     marginLeft: 20,
     marginRight: 20,
   },
@@ -120,7 +120,7 @@ export function IngredientInformation({onChange, ingredient}) {
     try {
       const userToken = await Keychain.getGenericPassword();
       const response = await fetch(
-        'http://localhost:4000/storage/ingredient/' + ingredient._id,
+        'http://192.168.0.101:4000/storage/ingredient/' + ingredient._id,
         {
           method: 'DELETE',
           headers: {
@@ -151,7 +151,7 @@ export function IngredientInformation({onChange, ingredient}) {
         amount: quantity,
       });
       const response = await fetch(
-        'http://localhost:4000/storage/ingredient/' + ingredient._id,
+        'http://192.168.0.101:4000/storage/ingredient/' + ingredient._id,
         {
           method: 'PUT',
           headers: {
@@ -252,8 +252,10 @@ export function IngredientInformation({onChange, ingredient}) {
             style={styles.foodImage}
           />
 
-          <View>
-            <Text style={{fontSize: 18, fontWeight: 'bold'}}>{foodName}</Text>
+          <View style={{flexShrink: 1}}>
+            <Text style={{fontSize: 16, fontWeight: 'bold', flexShrink: 1}}>
+              {foodName}
+            </Text>
             <Text style={{color: 'gray', fontWeight: '600', marginTop: 5}}>
               {category}
             </Text>

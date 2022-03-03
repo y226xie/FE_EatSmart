@@ -6,7 +6,7 @@ import {
   StyleSheet,
   Button,
   Dimensions,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import {SearchBar} from 'react-native-elements';
 import RecipeRecommendation from '../utils/RecipeRecommendation';
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 20,
-    marginVertical: 10,
+    marginVertical: 20,
     marginLeft: 18,
     fontWeight: 'bold',
   },
@@ -57,126 +57,120 @@ const stock_items = [
 function Main({navigation}) {
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState({pending: true, recommendations: []});
-  const [ingredients, setIngredients] = useState({'page': 0, 'items': []});
+  const [ingredients, setIngredients] = useState({page: 0, items: []});
   const [totalPage, setTotalPage] = useState(0);
-
 
   const updateSearch = search => {
     setSearch(search);
   };
 
-  const getIngredientsPageNumber = (userToken) => {
+  const getIngredientsPageNumber = userToken => {
     fetch(`http://localhost:4000/storage/pageNumber`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${userToken.password}`,
-      }
+      },
     })
-    .then(resp => resp.json())
-    .then(data => setTotalPage(data.message))
-  }
+      .then(resp => resp.json())
+      .then(data => setTotalPage(data.message));
+  };
 
   const getIngredients = (userToken, currPage) => {
     fetch(`http://localhost:4000/storage/ingredients?page=${currPage}`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${userToken.password}`,
-        }
-      })
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${userToken.password}`,
+      },
+    })
       .then(resp => resp.json())
-      .then(data => setIngredients({'page': currPage, 'items': data.message}))
-  }
+      .then(data => setIngredients({page: currPage, items: data.message}));
+  };
 
-  const handlePageChange = async (currPage) => {
+  const handlePageChange = async currPage => {
     userToken = await Keychain.getGenericPassword();
     getIngredients(userToken, currPage);
-  }
+  };
 
   useEffect(() => {
-    setStatus({pending: true, recommendations: []})
-    Keychain.getGenericPassword()
-    .then(userToken => {
+    setStatus({pending: true, recommendations: []});
+    Keychain.getGenericPassword().then(userToken => {
       getIngredientsPageNumber(userToken);
       getIngredients(userToken, 0);
 
-      fetch('http://localhost:4000/meal/recipeByIngredient',
-      {
+      fetch('http://localhost:4000/meal/recipeByIngredient', {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${userToken.password}`,
-        }
+        },
       })
-      .then(resp => resp.json())
-      .then(data => setStatus({pending:false, recommendations: data.message}))
-    })
-  }, [])
+        .then(resp => resp.json())
+        .then(data =>
+          setStatus({pending: false, recommendations: data.message}),
+        );
+    });
+  }, []);
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.appArea}>
         {status.pending ? (
           <ActivityIndicator />
-        ):(
-        <>
-        <View>
-          <Text style={styles.title}>Welcome Back!</Text>
-          <Text style={styles.userName}>Fuhai!</Text>
-        </View>
-        <View style={{marginHorizontal: 18}}>
-          <SearchBar
-            inputStyle={{backgroundColor: 'white'}}
-            containerStyle={{
-              backgroundColor: 'white',
-              borderTopWidth: 0,
-              borderBottomWidth: 0,
-              borderRadius: 15,
-              width: 320,
-            }}
-            inputContainerStyle={{
-              backgroundColor: 'white',
-              borderWidth: 0,
-              fontSize: 5,
-              height: 30,
-            }}
-            onChangeText={updateSearch}
-            value={search}
-            placeholder="search"
-          />
-        </View>
-        <Text style={styles.headerText}>Today's recipe recommendation</Text>
-        <View style={styles.recipe}>
-          <View style={styles.horizontal}>
-            <RecipeRecommendation
-              onPress={() => navigation.navigate({
-                name: 'RecipeDetails',
-                params: {recipeID: status.recommendations[0].id}
-              })}
-              foodName={status.recommendations[0].title}
-              // difficulity="Medium"
-              foodImageUrl={status.recommendations[0].image}
-              // foodName="Pasta"
-              // foodImageUrl="https://picsum.photos/700"
-            />
-            <RecipeRecommendation
-              onPress={() => navigation.navigate({
-                name: 'RecipeDetails',
-                params: {recipeID: status.recommendations[1].id}
-              })}
-              foodName={status.recommendations[1].title}
-              foodImageUrl={status.recommendations[1].image}
-              // foodName="Noodle"
-              // difficulity="Hard"
-              // foodImageUrl="https://picsum.photos/700"
-            />
-          </View>
-        </View>
-        <View styles={styles.elementMargin}>
-          <Text style={styles.headerText}>Current Stock</Text>
-          <Card style={{marginHorizontal: 10, borderRadius: 5}}>
-            <CurrentStock ingredients={ingredients} totalPage={totalPage} handlePageChange={(page) => handlePageChange(page)}/>
-          </Card>
-        </View>
-        </>
+        ) : (
+          <>
+            <View>
+              <Text style={styles.title}>Welcome Back!</Text>
+              <Text style={styles.userName}>Fuhai!</Text>
+            </View>
+            <View style={{marginHorizontal: 18}}>
+              <SearchBar
+                inputStyle={{backgroundColor: 'white'}}
+                containerStyle={{
+                  backgroundColor: 'white',
+                  borderTopWidth: 0,
+                  borderBottomWidth: 0,
+                  borderRadius: 15,
+                  width: 320,
+                }}
+                inputContainerStyle={{
+                  backgroundColor: 'white',
+                  borderWidth: 0,
+                  fontSize: 5,
+                  height: 30,
+                }}
+                onChangeText={updateSearch}
+                value={search}
+                placeholder="search"
+              />
+            </View>
+            <Text style={styles.headerText}>Today's recipe recommendation</Text>
+            <View style={styles.recipe}>
+              <View style={styles.horizontal}>
+                <RecipeRecommendation
+                  onPress={() =>
+                    navigation.navigate({
+                      name: 'RecipeDetails',
+                      params: {recipeID: status.recommendations[0].id},
+                    })
+                  }
+                  foodName={status.recommendations[0].title}
+                  // difficulity="Medium"
+                  foodImageUrl={status.recommendations[0].image}
+                  // foodName="Pasta"
+                  // foodImageUrl="https://picsum.photos/700"
+                />
+              </View>
+            </View>
+            <View>
+              <Text style={styles.headerText}>Current Stock</Text>
+              <Card style={{marginHorizontal: 10, borderRadius: 5}}>
+                <CurrentStock
+                  ingredients={ingredients}
+                  totalPage={totalPage}
+                  handlePageChange={page => handlePageChange(page)}
+                />
+              </Card>
+            </View>
+          </>
         )}
       </View>
     </ScrollView>

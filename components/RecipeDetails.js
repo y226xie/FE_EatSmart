@@ -6,7 +6,8 @@ import {
   Text,
   TouchableOpacity,
   Dimensions,
-  ActivityIndicator
+  ActivityIndicator,
+  ScrollView,
 } from 'react-native';
 import {DataTable, Card} from 'react-native-paper';
 import {RecipeDetailsImage} from '../images';
@@ -73,7 +74,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     zIndex: 10,
     alignSelf: 'stretch',
-    height: screenHeight * 0.26,
+    height: screenHeight * 0.3,
     marginHorizontal: 30,
     backgroundColor: '#FAFAF8',
     borderRadius: 15,
@@ -101,213 +102,229 @@ const styles = StyleSheet.create({
 });
 
 function RecipeDetails({route, navigation}) {
-
   const [recipeData, setrecipeData] = useState({
     pending: true,
     information: {
-      title: "",
+      title: '',
       ingredients: [],
       readyInMinutes: 0,
-      instructions: []
+      instructions: [],
     },
   });
   const [nutrition, setNutrition] = useState({});
 
   const getIngredientAmount = async (userToken, ingredient) => {
-      response = await fetch(`http://localhost:4000/storage/ingredient/${ingredient}`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${userToken.password}`,
-      }
-    })
+    response = await fetch(
+      `http://localhost:4000/storage/ingredient/${ingredient}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${userToken.password}`,
+        },
+      },
+    );
     data = await response.json();
     return data.message.reduce((partialSum, a) => partialSum + a.amount, 0);
-  }
+  };
 
   const getRecipeInformation = async (userToken, recipeID) => {
     response = await fetch(`http://localhost:4000/meal/recipe/${recipeID}`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${userToken.password}`,
-      }
-    })
+      },
+    });
     data = await response.json();
     let information = {
       title: data.message.title,
       ingredients: [],
       readyInMinutes: data.message.readyInMinutes,
-      instructions: data.message.analyzedInstructions[0].steps
+      instructions: data.message.analyzedInstructions[0].steps,
     };
     // for (var i=0; i<data.message.extendedIngredients.length; i++) {
     // await data.message.extendedIngredients.forEach( (item) => {
     for (const item of data.message.extendedIngredients) {
-
       amountOwned = await getIngredientAmount(userToken, item.name);
 
       let ingredient = {
         name: item.name,
         targetAmount: item.amount,
         unit: item.unit,
-        currentAmount: amountOwned
-      }
+        currentAmount: amountOwned,
+      };
 
-      information.ingredients.push(ingredient)
+      information.ingredients.push(ingredient);
     }
     setrecipeData({
       pending: false,
-      information: information
-    })
-  }
+      information: information,
+    });
+  };
 
-  const parseNutrition = (data) => {
+  const parseNutrition = data => {
     const parsedNutrition = {
       cal: data.bad[0].amount,
       fat: data.bad[1].amount,
       carb: data.bad[2].amount,
       sugar: data.bad[3].amount,
-      protein: data.good[0].amount
+      protein: data.good[0].amount,
     };
 
     return parsedNutrition;
-  }
+  };
 
   const getRecipeNutrition = (userToken, recipeID) => {
-    console.log(recipeID)
+    console.log(recipeID);
     fetch(`http://localhost:4000/meal/recipe/${recipeID}/nutrition`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${userToken.password}`,
-      }
+      },
     })
-    .then(resp => resp.json())
-    .then(data => setNutrition(parseNutrition(data.message)))
-  }
+      .then(resp => resp.json())
+      .then(data => setNutrition(parseNutrition(data.message)));
+  };
 
   useEffect(() => {
-    const recipeID = route.params.recipeID
-    setrecipeData({pending: true})
-    Keychain.getGenericPassword()
-    .then(userToken => {
+    const recipeID = route.params.recipeID;
+    setrecipeData({pending: true});
+    Keychain.getGenericPassword().then(userToken => {
       getRecipeNutrition(userToken, recipeID);
       getRecipeInformation(userToken, recipeID);
-    })
-  }, [])
+    });
+  }, []);
 
   return (
-    <View style={styles.container}>
-      {recipeData.pending ? (
+    <ScrollView>
+      <View style={styles.container}>
+        {recipeData.pending ? (
           <ActivityIndicator />
-        ):(
-        <>
-      <View>
-        <Image style={styles.backgroudImage} source={RecipeDetailsImage} />
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={30} color="white" />
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.foodInfo}>
-        <View style={{flexDirection: 'row'}}>
-          <Text style={styles.foodName}>{recipeData.information.title}</Text>
-          <View style={{marginTop: 25, marginLeft: 20, flexDirection: 'row'}}>
-            <StarRating
-              disabled={true}
-              starSize={18}
-              rating={4.5}
-              fullStarColor={'rgb(240, 203, 94)'}
-            />
-            <Text style={{marginLeft: 10}}>4.5</Text>
-          </View>
-        </View>
-        <View style={{flexDirection: 'row', marginTop: 20}}>
-          <Text> Difficulity: Easy </Text>
-          <Text> Time: {recipeData.information.readyInMinutes} mins</Text>
-        </View>
-      </View>
-
-      <View style={styles.toolsInfo}>
-        <View style={{marginLeft: 30}}>
-          <View style={{flexDirection: 'row', marginTop: 20}}>
-            <FontAwesome5Icon name="utensils" size={20} />
-            <Text style={{fontSize: 18, fontWeight: '400', marginLeft: 20}}>
-              Utentils
-            </Text>
-          </View>
-          <Text style={{marginTop: 20, marginHorizontal: 10}}>
-            Cutting Board, Knife, 2 bowls, Cooking spoon, Towels
-          </Text>
-          <View style={{flexDirection: 'row', marginTop: 20}}>
-            <Ionicons name="fast-food" size={20} />
-            <Text style={{fontSize: 18, fontWeight: '400', marginLeft: 20}}>
-              Nutrition Per Serving
-            </Text>
-          </View>
-          <View style={{flexDirection: 'row'}}>
-            <View style={{marginTop: 20, marginHorizontal: 20}}>
-              <Text>Cal</Text>
-              <Text style={{marginTop: 10}}>{nutrition.cal}</Text>
+        ) : (
+          <>
+            <View>
+              <Image
+                style={styles.backgroudImage}
+                source={RecipeDetailsImage}
+              />
+              <TouchableOpacity
+                style={styles.backButton}
+                onPress={() => navigation.goBack()}>
+                <Ionicons name="arrow-back" size={30} color="white" />
+              </TouchableOpacity>
             </View>
-            <View style={{marginTop: 20, marginHorizontal: 20}}>
-              <Text>Fat</Text>
-              <Text style={{marginTop: 10}}>{nutrition.fat}</Text>
-            </View>
-            <View style={{marginTop: 20, marginHorizontal: 20}}>
-              <Text>Carb</Text>
-              <Text style={{marginTop: 10}}>{nutrition.carb}</Text>
-            </View>
-            <View style={{marginTop: 20, marginHorizontal: 20}}>
-              <Text>Protein</Text>
-              <Text style={{marginTop: 10}}>{nutrition.protein}</Text>
-            </View>
-          </View>
-        </View>
-      </View>
 
-      <View style={styles.ingredients}>
-        <Text style={{fontSize: 18, fontWeight: '500'}}>
-          Required Ingredients
-        </Text>
-
-        <Card style={styles.ingredientList}>
-          <DataTable color="black">
-            <DataTable.Header>
-              <DataTable.Title>Ingredient Name</DataTable.Title>
-              <DataTable.Title numeric>Amount</DataTable.Title>
-              <DataTable.Title numeric>Current</DataTable.Title>
-            </DataTable.Header>
-            {recipeData.information.ingredients.map((item) => {
-              return (
-                <View key={item.name}>
-                <DataTable.Row>
-                  <DataTable.Cell>{item.name}</DataTable.Cell>
-                  <DataTable.Cell>{item.targetAmount} {item.unit}</DataTable.Cell>
-                  <DataTable.Cell numeric>{item.currentAmount}</DataTable.Cell>
-                </DataTable.Row>
+            <View style={styles.foodInfo}>
+              <View style={{flexDirection: 'row'}}>
+                <Text style={styles.foodName}>
+                  {recipeData.information.title}
+                </Text>
+                <View
+                  style={{marginTop: 25, marginLeft: 20, flexDirection: 'row'}}>
+                  <StarRating
+                    disabled={true}
+                    starSize={18}
+                    rating={4.5}
+                    fullStarColor={'rgb(240, 203, 94)'}
+                  />
+                  <Text style={{marginLeft: 10}}>4.5</Text>
                 </View>
-              );
-            })}
-          </DataTable>
-        </Card>
-      </View>
+              </View>
+              <View style={{flexDirection: 'row', marginTop: 20}}>
+                <Text> Difficulity: Easy </Text>
+                <Text> Time: {recipeData.information.readyInMinutes} mins</Text>
+              </View>
+            </View>
 
-      <View style={{flexDirection: 'row'}}>
-        <TouchableOpacity style={styles.collect}>
-          <Ionicons name="heart-outline" size={30} color="black" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate({
-            name: 'CookingSteps',
-            params: {instructions: recipeData.information.instructions}
-          })}
-          style={styles.cookingBtn}>
-          <Text style={{fontSize: 15}}>Start Cooking</Text>
-        </TouchableOpacity>
-      </View>
-      </>
+            <View style={styles.toolsInfo}>
+              <View style={{marginLeft: 30}}>
+                <View style={{flexDirection: 'row', marginTop: 20}}>
+                  <FontAwesome5Icon name="utensils" size={20} />
+                  <Text
+                    style={{fontSize: 18, fontWeight: '400', marginLeft: 20}}>
+                    Utentils
+                  </Text>
+                </View>
+                <Text style={{marginTop: 20, marginHorizontal: 10}}>
+                  Cutting Board, Knife, 2 bowls, Cooking spoon, Towels
+                </Text>
+                <View style={{flexDirection: 'row', marginTop: 20}}>
+                  <Ionicons name="fast-food" size={20} />
+                  <Text
+                    style={{fontSize: 18, fontWeight: '400', marginLeft: 20}}>
+                    Nutrition Per Serving
+                  </Text>
+                </View>
+                <View style={{flexDirection: 'row'}}>
+                  <View style={{marginTop: 20, marginHorizontal: 20}}>
+                    <Text>Cal</Text>
+                    <Text style={{marginTop: 10}}>{nutrition.cal}</Text>
+                  </View>
+                  <View style={{marginTop: 20, marginHorizontal: 20}}>
+                    <Text>Fat</Text>
+                    <Text style={{marginTop: 10}}>{nutrition.fat}</Text>
+                  </View>
+                  <View style={{marginTop: 20, marginHorizontal: 20}}>
+                    <Text>Carb</Text>
+                    <Text style={{marginTop: 10}}>{nutrition.carb}</Text>
+                  </View>
+                  <View style={{marginTop: 20, marginHorizontal: 20}}>
+                    <Text>Protein</Text>
+                    <Text style={{marginTop: 10}}>{nutrition.protein}</Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+
+            <View style={styles.ingredients}>
+              <Text style={{fontSize: 18, fontWeight: '500'}}>
+                Required Ingredients
+              </Text>
+
+              <Card style={styles.ingredientList}>
+                <DataTable color="black">
+                  <DataTable.Header>
+                    <DataTable.Title>Ingredient Name</DataTable.Title>
+                    <DataTable.Title numeric>Amount</DataTable.Title>
+                    <DataTable.Title numeric>Current</DataTable.Title>
+                  </DataTable.Header>
+                  {recipeData.information.ingredients.map(item => {
+                    return (
+                      <View key={item.name}>
+                        <DataTable.Row>
+                          <DataTable.Cell>{item.name}</DataTable.Cell>
+                          <DataTable.Cell>
+                            {item.targetAmount} {item.unit}
+                          </DataTable.Cell>
+                          <DataTable.Cell numeric>
+                            {item.currentAmount}
+                          </DataTable.Cell>
+                        </DataTable.Row>
+                      </View>
+                    );
+                  })}
+                </DataTable>
+              </Card>
+            </View>
+
+            <View style={{flexDirection: 'row', marginBottom: 20}}>
+              <TouchableOpacity style={styles.collect}>
+                <Ionicons name="heart-outline" size={30} color="black" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate({
+                    name: 'CookingSteps',
+                    params: {instructions: recipeData.information.instructions},
+                  })
+                }
+                style={styles.cookingBtn}>
+                <Text style={{fontSize: 15}}>Start Cooking</Text>
+              </TouchableOpacity>
+            </View>
+          </>
         )}
-    </View>
+      </View>
+    </ScrollView>
   );
 }
 
