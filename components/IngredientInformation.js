@@ -120,7 +120,7 @@ export function IngredientInformation({onChange, ingredient}) {
     try {
       const userToken = await Keychain.getGenericPassword();
       const response = await fetch(
-        'http://192.168.0.101:4000/storage/ingredient/' + ingredient._id,
+        'http://localhost:4000/storage/ingredient/' + ingredient._id,
         {
           method: 'DELETE',
           headers: {
@@ -151,7 +151,7 @@ export function IngredientInformation({onChange, ingredient}) {
         amount: quantity,
       });
       const response = await fetch(
-        'http://192.168.0.101:4000/storage/ingredient/' + ingredient._id,
+        'http://localhost:4000/storage/ingredient/' + ingredient._id,
         {
           method: 'PUT',
           headers: {

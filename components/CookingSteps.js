@@ -80,7 +80,17 @@ const styles = StyleSheet.create({
 function CookingSteps({route, navigation}) {
   
   const instructions = route.params.instructions;
-  console.log(instructions)
+  const score = route.params.score;
+  const readyInMinutes = route.params.readyInMinutes;
+  let difficulty = "";
+  if (readyInMinutes < 60) {
+    difficulty = "Easy";
+  } else if (readyInMinutes < 120) {
+    difficulty = "Medium";
+  } else {
+    difficulty = "Hard";
+  }
+
   return (
     <View style={styles.container}>
       <View>
@@ -99,15 +109,15 @@ function CookingSteps({route, navigation}) {
             <StarRating
               disabled={true}
               starSize={18}
-              rating={4.5}
+              rating={score}
               fullStarColor={'rgb(240, 203, 94)'}
             />
-            <Text style={{marginLeft: 10}}>4.5</Text>
+            <Text style={{marginLeft: 10}}>{score}</Text>
           </View>
         </View>
         <View style={{flexDirection: 'row', marginTop: 20}}>
-          <Text> Difficulity: Easy </Text>
-          <Text> Time: 20 mins</Text>
+          <Text> Difficulty: {difficulty} </Text>
+          <Text> Time: {readyInMinutes} mins</Text>
         </View>
       </View>
 

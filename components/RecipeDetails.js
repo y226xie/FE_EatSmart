@@ -108,7 +108,9 @@ function RecipeDetails({route, navigation}) {
       title: '',
       ingredients: [],
       readyInMinutes: 0,
-      instructions: [],
+      score: 0,
+      difficulty: "Easy",
+      instructions: []
     },
   });
   const [nutrition, setNutrition] = useState({});
@@ -139,8 +141,16 @@ function RecipeDetails({route, navigation}) {
       title: data.message.title,
       ingredients: [],
       readyInMinutes: data.message.readyInMinutes,
-      instructions: data.message.analyzedInstructions[0].steps,
+      score: parseFloat((data.message.spoonacularScore/20).toFixed(1)),
+      instructions: data.message.analyzedInstructions[0].steps
     };
+    if (information.readyInMinutes < 60) {
+      information.difficulty = "Easy";
+    } else if (information.readyInMinutes < 120) {
+      information.difficulty = "Medium";
+    } else {
+      information.difficulty = "Hard";
+    }
     // for (var i=0; i<data.message.extendedIngredients.length; i++) {
     // await data.message.extendedIngredients.forEach( (item) => {
     for (const item of data.message.extendedIngredients) {
@@ -215,22 +225,19 @@ function RecipeDetails({route, navigation}) {
 
             <View style={styles.foodInfo}>
               <View style={{flexDirection: 'row'}}>
-                <Text style={styles.foodName}>
-                  {recipeData.information.title}
-                </Text>
-                <View
-                  style={{marginTop: 25, marginLeft: 20, flexDirection: 'row'}}>
+                <Text style={styles.foodName}>{recipeData.information.title}</Text>
+                <View style={{marginTop: 25, marginLeft: 20, flexDirection: 'row'}}>
                   <StarRating
                     disabled={true}
                     starSize={18}
-                    rating={4.5}
+                    rating={recipeData.information.score}
                     fullStarColor={'rgb(240, 203, 94)'}
                   />
-                  <Text style={{marginLeft: 10}}>4.5</Text>
+                  <Text style={{marginLeft: 10}}>{recipeData.information.score}</Text>
                 </View>
               </View>
               <View style={{flexDirection: 'row', marginTop: 20}}>
-                <Text> Difficulity: Easy </Text>
+                <Text> Difficulity: {recipeData.information.difficulty} </Text>
                 <Text> Time: {recipeData.information.readyInMinutes} mins</Text>
               </View>
             </View>
@@ -311,12 +318,14 @@ function RecipeDetails({route, navigation}) {
                 <Ionicons name="heart-outline" size={30} color="black" />
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate({
-                    name: 'CookingSteps',
-                    params: {instructions: recipeData.information.instructions},
-                  })
-                }
+                onPress={() => navigation.navigate({
+                  name: 'CookingSteps',
+                  params: {
+                    instructions: recipeData.information.instructions,
+                    score: recipeData.information.score,
+                    readyInMinutes: recipeData.information.readyInMinutes,
+                  }
+                })}
                 style={styles.cookingBtn}>
                 <Text style={{fontSize: 15}}>Start Cooking</Text>
               </TouchableOpacity>

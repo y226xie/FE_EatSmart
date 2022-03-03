@@ -50,7 +50,7 @@ export default function App() {
           userToken = null;
         }
         if (userToken != null) {
-          response = await fetch('http://192.168.0.101:4000/auth/user', 
+          response = await fetch('http://localhost:4000/auth/user', 
           {
             method: 'GET',
             headers: {
@@ -78,7 +78,7 @@ export default function App() {
     () => ({
       signIn: async data => {
         try {
-          const response = await fetch('http://192.168.0.101:4000/auth/login', {
+          const response = await fetch('http://localhost:4000/auth/login', {
             method: 'POST',
             headers: {
               'Content-Type': `application/json`,

@@ -101,7 +101,7 @@ export default class RecipeSearchView extends Component {
     const cuisines = [...this.state.cuisinesFilter].map(item => item).join(',');
     const diets = [...this.state.dietsFilter].map(item => item).join(',');
     const response = await fetch(
-      `http://192.168.0.101:4000/meal/recipeComplex?cuisine=${cuisines}&diet=${diets}`,
+      `http://localhost:4000/meal/recipeComplex?cuisine=${cuisines}&diet=${diets}`,
       {
         method: 'GET',
         headers: {
