@@ -13,7 +13,7 @@ import RecipeRecommendation from '../utils/RecipeRecommendation';
 import {Card} from 'react-native-paper';
 import CurrentStock from '../utils/CurrentStock';
 import * as Keychain from 'react-native-keychain';
-import {API_root} from '@env'
+import {API_root} from '@env';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
