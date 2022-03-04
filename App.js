@@ -4,7 +4,7 @@ import SignInScreen from './components/SignInScreen';
 import TabNavigator from './components/TabNavigator';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
-import {API_root} from '@env'
+import {API_root} from '@env';
 
 const Stack = createNativeStackNavigator();
 export const AuthContext = React.createContext();

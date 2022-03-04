@@ -188,7 +188,6 @@ function RecipeDetails({route, navigation}) {
   };
 
   const getRecipeNutrition = (userToken, recipeID) => {
-    console.log(recipeID);
     fetch(`${API_root}/meal/recipe/${recipeID}/nutrition`, {
       method: 'GET',
       headers: {

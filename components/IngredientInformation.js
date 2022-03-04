@@ -15,7 +15,7 @@ import DatePicker from 'react-native-date-picker';
 import * as Keychain from 'react-native-keychain';
 import {Card} from 'react-native-paper';
 import {TextInput} from 'react-native-paper';
-import {API_root} from '@env'
+import {API_root} from '@env';
 
 const screenHeight = Dimensions.get('screen').height;
 const screenWidth = Dimensions.get('screen').width;
@@ -121,7 +121,7 @@ export function IngredientInformation({onChange, ingredient}) {
     try {
       const userToken = await Keychain.getGenericPassword();
       const response = await fetch(
-        `${API_root}/storage/ingredient/` + ingredient._id,
+        `${API_root}/storage/ingredient/${ingredient._id}`,
         {
           method: 'DELETE',
           headers: {
@@ -152,7 +152,7 @@ export function IngredientInformation({onChange, ingredient}) {
         amount: quantity,
       });
       const response = await fetch(
-        `${API_root}/storage/ingredient/` + ingredient._id,
+        `${API_root}/storage/ingredient/${ingredient._id}`,
         {
           method: 'PUT',
           headers: {

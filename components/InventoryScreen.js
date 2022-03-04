@@ -113,7 +113,7 @@ export function InventoryScreen() {
         amount: quantity,
       });
       const response = await fetch(
-        `${API_root}/storage/ingredient/` + ingredient._id,
+        `${API_root}/storage/ingredient/${ingredient._id}`,
         {
           method: 'PUT',
           headers: {
