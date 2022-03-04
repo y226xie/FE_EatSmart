@@ -1,6 +1,7 @@
 import React, { Fragment, Component } from 'react';
 // import * as ImagePicker from 'react-native-image-picker';
 import ImagePicker, {launchImageLibrary, launchCamera} from 'react-native-image-picker';
+import {API_root} from '@env';
 
 import {
   SafeAreaView,
@@ -45,6 +46,34 @@ export default class PickImageScreen extends Component {
     }
   }
 
+  createFormData = (photo, body = {}) => {
+    const data = new FormData();
+
+    data.append('photo', {
+      name: photo.fileName,
+      type: photo.type,
+      uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
+    });
+  
+    Object.keys(body).forEach((key) => {
+      data.append(key, body[key]);
+    });
+  
+    return data;
+  }
+
+  handleUploadPhoto = (photo) => {
+    const imageData = this.createFormData(photo, {userId: '123'});
+
+    fetch(`${API_root}/storage/image`, {
+      method: 'POST',
+      body: imageData,
+    })
+    .then((response) => response.json())
+    .then((data) => console.log('response', data))
+    .catch((error) => console.log('error', error));
+  }
+
   openCamera = () => {
     let options = {
       storageOptions: {
@@ -65,11 +94,12 @@ export default class PickImageScreen extends Component {
       } else {
         const source = { uri: response.uri };
         console.log('response', JSON.stringify(response));
-        this.setState({
-          filePath: response,
-          fileData: response.data,
-          fileUri: response.uri
-        });
+        // this.setState({
+        //   filePath: response,
+        //   fileData: response.data,
+        //   fileUri: response.uri
+        // });
+        this.handleUploadPhoto(response.assets[0])
       }
     });
 
@@ -95,11 +125,12 @@ export default class PickImageScreen extends Component {
       } else {
         const source = { uri: response.uri };
         console.log('response', JSON.stringify(response));
-        this.setState({
-          filePath: response,
-          fileData: response.data,
-          fileUri: response.uri
-        });
+        // this.setState({
+        //   filePath: response,
+        //   fileData: response.data,
+        //   fileUri: response.uri
+        // });
+        this.handleUploadPhoto(response.assets[0])
       }
     });
 
