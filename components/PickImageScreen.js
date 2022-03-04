@@ -104,12 +104,7 @@ export default class PickImageScreen extends Component {
         alert(response.customButton);
       } else {
         const source = {uri: response.uri};
-        console.log('response', JSON.stringify(response));
-        // this.setState({
-        //   filePath: response,
-        //   fileData: response.data,
-        //   fileUri: response.uri
-        // });
+        // console.log('response', JSON.stringify(response));
         this.handleUploadPhoto(response.assets[0]);
       }
     });
@@ -134,12 +129,7 @@ export default class PickImageScreen extends Component {
         alert(response.customButton);
       } else {
         const source = {uri: response.uri};
-        console.log('response', JSON.stringify(response));
-        // this.setState({
-        //   filePath: response,
-        //   fileData: response.data,
-        //   fileUri: response.uri
-        // });
+        // console.log('response', JSON.stringify(response));
         this.handleUploadPhoto(response.assets[0]);
       }
     });
