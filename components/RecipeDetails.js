@@ -15,6 +15,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import StarRating from 'react-native-star-rating';
 import * as Keychain from 'react-native-keychain';
+import {API_root} from '@env'
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
@@ -117,7 +118,7 @@ function RecipeDetails({route, navigation}) {
 
   const getIngredientAmount = async (userToken, ingredient) => {
     response = await fetch(
-      `http://192.168.0.101:4000/storage/ingredient/${ingredient}`,
+      `${API_root}/storage/ingredient/${ingredient}`,
       {
         method: 'GET',
         headers: {
@@ -131,7 +132,7 @@ function RecipeDetails({route, navigation}) {
 
   const getRecipeInformation = async (userToken, recipeID) => {
     response = await fetch(
-      `http://192.168.0.101:4000/meal/recipe/${recipeID}`,
+      `${API_root}/meal/recipe/${recipeID}`,
       {
         method: 'GET',
         headers: {
@@ -188,7 +189,7 @@ function RecipeDetails({route, navigation}) {
 
   const getRecipeNutrition = (userToken, recipeID) => {
     console.log(recipeID);
-    fetch(`http://192.168.0.101:4000/meal/recipe/${recipeID}/nutrition`, {
+    fetch(`${API_root}/meal/recipe/${recipeID}/nutrition`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${userToken.password}`,

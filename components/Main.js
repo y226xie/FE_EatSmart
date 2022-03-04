@@ -13,6 +13,7 @@ import RecipeRecommendation from '../utils/RecipeRecommendation';
 import {Card} from 'react-native-paper';
 import CurrentStock from '../utils/CurrentStock';
 import * as Keychain from 'react-native-keychain';
+import {API_root} from '@env'
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
@@ -65,7 +66,7 @@ function Main({navigation}) {
   };
 
   const getIngredientsPageNumber = userToken => {
-    fetch(`http://192.168.0.101:4000/storage/pageNumber`, {
+    fetch(`${API_root}/storage/pageNumber`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${userToken.password}`,
@@ -76,7 +77,7 @@ function Main({navigation}) {
   };
 
   const getIngredients = (userToken, currPage) => {
-    fetch(`http://192.168.0.101:4000/storage/ingredients?page=${currPage}`, {
+    fetch(`${API_root}/storage/ingredients?page=${currPage}`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${userToken.password}`,
@@ -97,7 +98,7 @@ function Main({navigation}) {
       getIngredientsPageNumber(userToken);
       getIngredients(userToken, 0);
 
-      fetch('http://192.168.0.101:4000/meal/recipeByIngredient', {
+      fetch(`${API_root}/meal/recipeByIngredient`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${userToken.password}`,

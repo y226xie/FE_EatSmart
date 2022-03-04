@@ -108,7 +108,7 @@ export default function SearchFilterView(props) {
 
   return (
     <View style={styles.container}>
-      {/* <ScrollView > */}
+      <Text>{props.name}</Text>
       <TextInput
         style={styles.textInputStyle}
         onChangeText={text => searchFilterFunction(text)}
@@ -131,7 +131,7 @@ export default function SearchFilterView(props) {
           })} */}
         {displaySelectedItems()}
       </View>
-      {isFocused ? (
+      {isFocused && (
         <FlatList
           nestedScrollEnabled
           data={filteredDataSource}
@@ -139,10 +139,7 @@ export default function SearchFilterView(props) {
           ItemSeparatorComponent={ItemSeparatorView}
           renderItem={ItemView}
         />
-      ) : (
-        <Text>test</Text>
       )}
-      {/* </ScrollView> */}
     </View>
   );
 }
@@ -150,7 +147,7 @@ export default function SearchFilterView(props) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
-    height: 300,
+    // height: 300,
   },
   itemStyle: {
     padding: 10,

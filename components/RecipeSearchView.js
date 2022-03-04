@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import SearchFilterView from './searchFilterView';
 import * as Keychain from 'react-native-keychain';
+import {API_root} from '@env'
 
 const test = [
   {
@@ -56,8 +57,8 @@ export default class RecipeSearchView extends Component {
       data: [],
       cuisinesFilter: new Set(),
       dietsFilter: new Set(),
-      intolerancesFilter: [],
-      mealTylesFilter: [],
+      intolerancesFilter: new Set(),
+      mealTylesFilter: new Set(),
       includeIngredients: '',
       maxColories: '',
       recipes: [],
@@ -65,34 +66,66 @@ export default class RecipeSearchView extends Component {
   }
 
   addCuisines = async item => {
-    selectedItem = this.state.cuisinesFilter;
-    selectedItem.add(item);
+    selectedItems = this.state.cuisinesFilter;
+    selectedItems.add(item);
     this.setState({
-      cuisinesFilter: selectedItem,
+      cuisinesFilter: selectedItems,
     });
   };
 
   removeCuisines = async item => {
-    selectedItem = this.state.cuisinesFilter;
-    selectedItem.delete(item);
+    selectedItems = this.state.cuisinesFilter;
+    selectedItems.delete(item);
     this.setState({
-      cuisinesFilter: selectedItem,
+      cuisinesFilter: selectedItems,
     });
   };
 
   addDiets = async item => {
-    selectedItem = this.state.dietsFilter;
-    selectedItem.add(item);
+    selectedItems = this.state.dietsFilter;
+    selectedItems.add(item);
     this.setState({
-      dietsFilter: selectedItem,
+      dietsFilter: selectedItems,
     });
   };
 
   removeDiets = async item => {
-    selectedItem = this.state.dietsFilter;
-    selectedItem.delete(item);
+    selectedItems = this.state.dietsFilter;
+    selectedItems.delete(item);
     this.setState({
-      dietsFilter: selectedItem,
+      dietsFilter: selectedItems,
+    });
+  };
+
+  addIntolerance = async item => {
+    selectedItems = this.state.intolerancesFilter;
+    selectedItems.add(item);
+    this.setState({
+      intolerancesFilter: selectedItems,
+    });
+  };
+
+  removeIntolerance = async item => {
+    selectedItems = this.state.intolerancesFilter;
+    selectedItems.delete(item);
+    this.setState({
+      intolerancesFilter: selectedItems,
+    });
+  };
+
+  addMealType = async item => {
+    selectedItems = this.state.mealTylesFilter;
+    selectedItems.add(item);
+    this.setState({
+      mealTylesFilter: selectedItems,
+    });
+  };
+
+  removeMealType = async item => {
+    selectedItems = this.state.mealTylesFilter;
+    selectedItems.delete(item);
+    this.setState({
+      mealTylesFilter: selectedItems,
     });
   };
 
@@ -101,7 +134,7 @@ export default class RecipeSearchView extends Component {
     const cuisines = [...this.state.cuisinesFilter].map(item => item).join(',');
     const diets = [...this.state.dietsFilter].map(item => item).join(',');
     const response = await fetch(
-      `http://192.168.0.101:4000/meal/recipeComplex?cuisine=${cuisines}&diet=${diets}`,
+      `${API_root}/meal/recipeComplex?cuisine=${cuisines}&diet=${diets}`,
       {
         method: 'GET',
         headers: {
@@ -193,12 +226,28 @@ export default class RecipeSearchView extends Component {
           selectedItems={this.state.cuisinesFilter}
           pushItem={this.addCuisines}
           popItem={this.removeCuisines}
+          name="Cuisines"
         />
         <SearchFilterView
           data={diets}
           selectedItems={this.state.dietsFilter}
           pushItem={this.addDiets}
           popItem={this.removeDiets}
+          name="Diets"
+        />
+        <SearchFilterView
+          data={intolerances}
+          selectedItems={this.state.intolerancesFilter}
+          pushItem={this.addIntolerance}
+          popItem={this.removeIntolerance}
+          name="Intolerances"
+        />
+        <SearchFilterView
+          data={mealTypes}
+          selectedItems={this.state.mealTylesFilter}
+          pushItem={this.addMealType}
+          popItem={this.removeMealType}
+          name="Meal Types"
         />
       </SafeAreaView>
     );

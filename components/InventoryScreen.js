@@ -15,6 +15,7 @@ import * as Keychain from 'react-native-keychain';
 import {TextInput} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DatePicker from 'react-native-date-picker';
+import {API_root} from '@env'
 
 const screenHeight = Dimensions.get('screen').height;
 const screenWidth = Dimensions.get('screen').width;
@@ -112,7 +113,7 @@ export function InventoryScreen() {
         amount: quantity,
       });
       const response = await fetch(
-        'http://192.168.0.101:4000/storage/ingredient/' + ingredient._id,
+        `${API_root}/storage/ingredient/` + ingredient._id,
         {
           method: 'PUT',
           headers: {
@@ -138,7 +139,7 @@ export function InventoryScreen() {
     try {
       setIsLoading(true);
       const response = await fetch(
-        'http://192.168.0.101:4000/storage/ingredients',
+        `${API_root}/storage/ingredients`,
         {
           headers: {
             Authorization: `Bearer ${userToken.password}`,

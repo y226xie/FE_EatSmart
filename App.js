@@ -4,6 +4,7 @@ import SignInScreen from './components/SignInScreen';
 import TabNavigator from './components/TabNavigator';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
+import {API_root} from '@env'
 
 const Stack = createNativeStackNavigator();
 export const AuthContext = React.createContext();
@@ -50,7 +51,7 @@ export default function App() {
           userToken = null;
         }
         if (userToken != null) {
-          response = await fetch('http://192.168.0.101:4000/auth/user', {
+          response = await fetch(`${API_root}/auth/user`, {
             method: 'GET',
             headers: {
               Authorization: `Bearer ${userToken.password}`,
@@ -76,7 +77,7 @@ export default function App() {
     () => ({
       signIn: async data => {
         try {
-          const response = await fetch('http://192.168.0.101:4000/auth/login', {
+          const response = await fetch(`${API_root}/auth/login`, {
             method: 'POST',
             headers: {
               'Content-Type': `application/json`,
