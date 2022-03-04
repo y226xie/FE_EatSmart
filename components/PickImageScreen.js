@@ -50,7 +50,7 @@ export default class PickImageScreen extends Component {
     const data = new FormData();
 
     data.append('photo', {
-      name: photo.fileName,
+      fileName: photo.fileName,
       type: photo.type,
       uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
     });
