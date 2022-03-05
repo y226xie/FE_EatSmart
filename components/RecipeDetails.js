@@ -339,6 +339,7 @@ function RecipeDetails({route, navigation}) {
                   navigation.navigate({
                     name: 'CookingSteps',
                     params: {
+                      title: recipeData.information.title,
                       instructions: recipeData.information.instructions,
                       score: recipeData.information.score,
                       readyInMinutes: recipeData.information.readyInMinutes,

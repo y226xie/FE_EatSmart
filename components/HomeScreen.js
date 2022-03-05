@@ -26,6 +26,7 @@ function HomeScreen({navigation}) {
         name="CookingSteps"
         component={CookingSteps}
         initialParams= {{
+          title: "",
           instructions: [],
           score: 0,
           readyInMinutes: 0,

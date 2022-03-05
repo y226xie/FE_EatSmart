@@ -82,6 +82,7 @@ function CookingSteps({route, navigation}) {
   const instructions = route.params.instructions;
   const score = route.params.score;
   const readyInMinutes = route.params.readyInMinutes;
+  const title = route.params.title;
   let difficulty = "";
   if (readyInMinutes < 60) {
     difficulty = "Easy";
@@ -104,7 +105,7 @@ function CookingSteps({route, navigation}) {
 
       <View style={styles.foodInfo}>
         <View style={{flexDirection: 'row'}}>
-          <Text style={styles.foodName}>Noodles</Text>
+          <Text style={styles.foodName}>{title}</Text>
           <View style={{marginTop: 25, marginLeft: 20, flexDirection: 'row'}}>
             <StarRating
               disabled={true}
