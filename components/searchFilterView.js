@@ -108,13 +108,13 @@ export default function SearchFilterView(props) {
 
   return (
     <View style={styles.container}>
-      <Text>{props.name}</Text>
+      <Text style={styles.title}>{props.name}</Text>
       <TextInput
         style={styles.textInputStyle}
         onChangeText={text => searchFilterFunction(text)}
         value={search}
         // underlineColorAndroid="transparent"
-        placeholder="Search"
+        placeholder={props.name}
         autoCapitalize="none"
         autoCorrect={false}
         onFocus={() => setFocus(true)}
@@ -146,8 +146,13 @@ export default function SearchFilterView(props) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
-    // height: 300,
+    marginHorizontal: 12,
+    marginVertical: 5,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: '500',
+    marginLeft: 2,
   },
   itemStyle: {
     padding: 10,
@@ -157,8 +162,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingLeft: 20,
     margin: 5,
-    borderColor: '#009688',
-    backgroundColor: '#FFFFFF',
+    borderColor: 'gray',
+    borderRadius: 5,
+    borderWidth: 1,
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOpacity: 0.8,
+    shadowRadius: 15,
+    shadowOffset: {width: 1, height: 13},
+    marginBottom: 10,
   },
   selectedItems: {
     flexDirection: 'row',

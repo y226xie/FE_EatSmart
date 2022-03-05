@@ -4,13 +4,12 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   Dimensions,
-  SafeAreaView,
+  TouchableOpacity,
 } from 'react-native';
 import SearchFilterView from './searchFilterView';
 import * as Keychain from 'react-native-keychain';
-import {API_root} from '@env'
+import {API_root} from '@env';
 
 const test = [
   {
@@ -35,17 +34,103 @@ const test = [
   },
 ];
 
+const cuisines = [
+  'african',
+  'american',
+  'british',
+  'cajun',
+  'caribbean',
+  'chinese',
+  'eastern european',
+  'european',
+  'french',
+  'german',
+  'greek',
+  'indian',
+  'irish',
+  'italian',
+  'japanese',
+  'jewish',
+  'korean',
+  'mediterranean',
+  'mexican',
+  'nordic',
+  'spanish',
+  'thai',
+  'vietnamese',
+];
+const diets = [
+  'Gluten Free',
+  'Ketogenic',
+  'Vegetarian',
+  'Lacto-Vegetarian',
+  'Ovo-Vegetarian',
+  'Vegan',
+  'Pescetarian',
+  'Paleo',
+];
+const intolerances = [
+  'Dairy',
+  'Egg',
+  'Gluten',
+  'Grain',
+  'Peanut',
+  'Seafood',
+  'Sesame',
+  'Shellfish',
+  'Soy',
+  'Sulfite',
+  'Tree Nut',
+  'Wheat',
+];
+const mealTypes = [
+  'main course',
+  'side dish',
+  'dessert',
+  'appetizer',
+  'salad',
+  'bread',
+  'breakfast',
+  'soup',
+  'beverage',
+  'sauce',
+  'marinade',
+  'fingerfood',
+  'snack',
+  'drink',
+];
+
 const screenHeight = Dimensions.get('screen').height;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
     backgroundColor: 'rgb(242, 243, 237)',
   },
   appArea: {
-    marginTop: screenHeight * 0.07,
+    marginTop: screenHeight * 0.06,
+    marginHorizontal: 18,
+  },
+  title: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    marginLeft: 18,
+    marginBottom: 20,
+  },
+  addBtn: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: screenHeight * 0.05,
+    marginTop: 10,
+    backgroundColor: 'rgb(255, 231, 175)',
+    borderRadius: 15,
+    marginHorizontal: 18,
+    borderWidth: 1,
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOpacity: 0.8,
+    shadowRadius: 15,
+    shadowOffset: {width: 1, height: 13},
+    marginBottom: 10,
   },
 });
 
@@ -153,103 +238,44 @@ export default class RecipeSearchView extends Component {
   };
 
   render() {
-    const cuisines = [
-      'african',
-      'american',
-      'british',
-      'cajun',
-      'caribbean',
-      'chinese',
-      'eastern european',
-      'european',
-      'french',
-      'german',
-      'greek',
-      'indian',
-      'irish',
-      'italian',
-      'japanese',
-      'jewish',
-      'korean',
-      'mediterranean',
-      'mexican',
-      'nordic',
-      'spanish',
-      'thai',
-      'vietnamese',
-    ];
-    const diets = [
-      'Gluten Free',
-      'Ketogenic',
-      'Vegetarian',
-      'Lacto-Vegetarian',
-      'Ovo-Vegetarian',
-      'Vegan',
-      'Pescetarian',
-      'Paleo',
-    ];
-    const intolerances = [
-      'Dairy',
-      'Egg',
-      'Gluten',
-      'Grain',
-      'Peanut',
-      'Seafood',
-      'Sesame',
-      'Shellfish',
-      'Soy',
-      'Sulfite',
-      'Tree Nut',
-      'Wheat',
-    ];
-    const mealTypes = [
-      'main course',
-      'side dish',
-      'dessert',
-      'appetizer',
-      'salad',
-      'bread',
-      'breakfast',
-      'soup',
-      'beverage',
-      'sauce',
-      'marinade',
-      'fingerfood',
-      'snack',
-      'drink',
-    ];
     return (
-      <SafeAreaView style={{flex: 1}}>
-        <Button title="Submit" onPress={this.handleSumbit} />
-        <SearchFilterView
-          data={cuisines}
-          selectedItems={this.state.cuisinesFilter}
-          pushItem={this.addCuisines}
-          popItem={this.removeCuisines}
-          name="Cuisines"
-        />
-        <SearchFilterView
-          data={diets}
-          selectedItems={this.state.dietsFilter}
-          pushItem={this.addDiets}
-          popItem={this.removeDiets}
-          name="Diets"
-        />
-        <SearchFilterView
-          data={intolerances}
-          selectedItems={this.state.intolerancesFilter}
-          pushItem={this.addIntolerance}
-          popItem={this.removeIntolerance}
-          name="Intolerances"
-        />
-        <SearchFilterView
-          data={mealTypes}
-          selectedItems={this.state.mealTylesFilter}
-          pushItem={this.addMealType}
-          popItem={this.removeMealType}
-          name="Meal Types"
-        />
-      </SafeAreaView>
+      <View style={styles.container}>
+        <View style={styles.appArea}>
+          <Text style={styles.title}>Recipe Library</Text>
+          <SearchFilterView
+            data={cuisines}
+            selectedItems={this.state.cuisinesFilter}
+            pushItem={this.addCuisines}
+            popItem={this.removeCuisines}
+            name="Cuisines"
+          />
+          <SearchFilterView
+            data={diets}
+            selectedItems={this.state.dietsFilter}
+            pushItem={this.addDiets}
+            popItem={this.removeDiets}
+            name="Diets"
+          />
+          <SearchFilterView
+            data={intolerances}
+            selectedItems={this.state.intolerancesFilter}
+            pushItem={this.addIntolerance}
+            popItem={this.removeIntolerance}
+            name="Intolerances"
+          />
+          <SearchFilterView
+            data={mealTypes}
+            selectedItems={this.state.mealTylesFilter}
+            pushItem={this.addMealType}
+            popItem={this.removeMealType}
+            name="Meal Types"
+          />
+
+          <TouchableOpacity style={styles.addBtn} onPress={this.handleSumbit}>
+            <Text style={{fontSize: 15}}>Explore Recipes</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     );
   }
 }

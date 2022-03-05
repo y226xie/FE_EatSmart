@@ -15,7 +15,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import StarRating from 'react-native-star-rating';
 import * as Keychain from 'react-native-keychain';
-import {API_root} from '@env'
+import {API_root} from '@env';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
@@ -42,10 +42,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgb(143, 126,110)',
   },
   foodInfo: {
+    justifyContent: 'space-between',
     marginTop: 20,
     zIndex: 10,
     alignSelf: 'stretch',
-    height: 100,
+    height: screenHeight * 0.2,
     marginHorizontal: 30,
     alignItems: 'center',
     backgroundColor: '#FAFAF8',
@@ -55,6 +56,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '400',
     marginTop: 20,
+    marginHorizontal: 10,
   },
   rating: {
     marginTop: 20,
@@ -128,25 +130,22 @@ function RecipeDetails({route, navigation}) {
     );
     const data = await response.json();
     const amountWithUnit = {
-      amount: data.message.reduce((partialSum, a) => partialSum + a.amount, 0), 
-      unit: ""
-    }
+      amount: data.message.reduce((partialSum, a) => partialSum + a.amount, 0),
+      unit: '',
+    };
     if (data.message.length > 0) {
-      amountWithUnit.unit = data.message[0].unit
+      amountWithUnit.unit = data.message[0].unit;
     }
     return amountWithUnit;
   };
 
   const getRecipeInformation = async (userToken, recipeID) => {
-    const response = await fetch(
-      `${API_root}/meal/recipe/${recipeID}`,
-      {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${userToken.password}`,
-        },
+    const response = await fetch(`${API_root}/meal/recipe/${recipeID}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${userToken.password}`,
       },
-    );
+    });
     const data = await response.json();
     let information = {
       title: data.message.title,
@@ -236,24 +235,23 @@ function RecipeDetails({route, navigation}) {
             </View>
 
             <View style={styles.foodInfo}>
-              <View style={{flexDirection: 'row'}}>
-                <Text style={styles.foodName}>
-                  {recipeData.information.title}
+              <Text style={styles.foodName}>
+                {recipeData.information.title}
+              </Text>
+              <View
+                style={{marginTop: 25, marginLeft: 20, flexDirection: 'row'}}>
+                <Text>Rating: </Text>
+                <StarRating
+                  disabled={true}
+                  starSize={18}
+                  rating={recipeData.information.score}
+                  fullStarColor={'rgb(240, 203, 94)'}
+                />
+                <Text style={{marginLeft: 10}}>
+                  {recipeData.information.score}
                 </Text>
-                <View
-                  style={{marginTop: 25, marginLeft: 20, flexDirection: 'row'}}>
-                  <StarRating
-                    disabled={true}
-                    starSize={18}
-                    rating={recipeData.information.score}
-                    fullStarColor={'rgb(240, 203, 94)'}
-                  />
-                  <Text style={{marginLeft: 10}}>
-                    {recipeData.information.score}
-                  </Text>
-                </View>
               </View>
-              <View style={{flexDirection: 'row', marginTop: 20}}>
+              <View style={{flexDirection: 'row', marginBottom: 20}}>
                 <Text> Difficulity: {recipeData.information.difficulty} </Text>
                 <Text> Time: {recipeData.information.readyInMinutes} mins</Text>
               </View>

@@ -1,8 +1,5 @@
 import React, {useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-// import Main from './Main';
-// import RecipeDetails from './RecipeDetails';
-// import CookingSteps from './CookingSteps';
 import RecipeSearchView from './RecipeSearchView';
 import RecipeDisplayView from './RecipeDisplayView';
 
