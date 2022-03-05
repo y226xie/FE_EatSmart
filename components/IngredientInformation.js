@@ -111,6 +111,7 @@ export function IngredientInformation({onChange, ingredient}) {
   const foodName = ingredient.name.toUpperCase();
   const unit = ingredient.unit;
   const category = ingredient.aisle;
+  const image = ingredient.image;
 
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [quantity, setQuantity] = React.useState(ingredient.amount);
@@ -249,7 +250,7 @@ export function IngredientInformation({onChange, ingredient}) {
       <Card style={styles.card}>
         <View style={{flexDirection: 'row', marginTop: 20}}>
           <Image
-            source={{uri: 'https://picsum.photos/700'}}
+            source={{uri: image}}
             style={styles.foodImage}
           />
 
