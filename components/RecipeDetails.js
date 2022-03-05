@@ -117,7 +117,7 @@ function RecipeDetails({route, navigation}) {
   const [nutrition, setNutrition] = useState({});
 
   const getIngredientAmount = async (userToken, ingredient) => {
-    response = await fetch(
+    const response = await fetch(
       `${API_root}/storage/ingredient/${ingredient}`,
       {
         method: 'GET',
@@ -126,12 +126,19 @@ function RecipeDetails({route, navigation}) {
         },
       },
     );
-    data = await response.json();
-    return data.message.reduce((partialSum, a) => partialSum + a.amount, 0);
+    const data = await response.json();
+    const amountWithUnit = {
+      amount: data.message.reduce((partialSum, a) => partialSum + a.amount, 0), 
+      unit: ""
+    }
+    if (data.message.length > 0) {
+      amountWithUnit.unit = data.message[0].unit
+    }
+    return amountWithUnit;
   };
 
   const getRecipeInformation = async (userToken, recipeID) => {
-    response = await fetch(
+    const response = await fetch(
       `${API_root}/meal/recipe/${recipeID}`,
       {
         method: 'GET',
@@ -140,13 +147,14 @@ function RecipeDetails({route, navigation}) {
         },
       },
     );
-    data = await response.json();
+    const data = await response.json();
     let information = {
       title: data.message.title,
       ingredients: [],
       readyInMinutes: data.message.readyInMinutes,
       score: parseFloat((data.message.spoonacularScore / 20).toFixed(1)),
       instructions: data.message.analyzedInstructions[0].steps,
+      difficulty: 'Easy',
     };
     if (information.readyInMinutes < 60) {
       information.difficulty = 'Easy';
@@ -158,13 +166,14 @@ function RecipeDetails({route, navigation}) {
     // for (var i=0; i<data.message.extendedIngredients.length; i++) {
     // await data.message.extendedIngredients.forEach( (item) => {
     for (const item of data.message.extendedIngredients) {
-      amountOwned = await getIngredientAmount(userToken, item.name);
+      const amountWithUnit = await getIngredientAmount(userToken, item.name);
 
       let ingredient = {
         name: item.name,
         targetAmount: item.amount,
         unit: item.unit,
-        currentAmount: amountOwned,
+        currentAmount: amountWithUnit.amount,
+        currentUnit: amountWithUnit.unit,
       };
 
       information.ingredients.push(ingredient);
@@ -203,7 +212,7 @@ function RecipeDetails({route, navigation}) {
     setrecipeData({pending: true});
     Keychain.getGenericPassword().then(userToken => {
       getRecipeNutrition(userToken, recipeID);
-      getRecipeInformation(userToken, recipeID);
+      getRecipeInformation(userToken, recipeID).catch(console.error);
     });
   }, []);
 
@@ -311,7 +320,7 @@ function RecipeDetails({route, navigation}) {
                             {item.targetAmount} {item.unit}
                           </DataTable.Cell>
                           <DataTable.Cell numeric>
-                            {item.currentAmount}
+                            {item.currentAmount} {item.currentUnit}
                           </DataTable.Cell>
                         </DataTable.Row>
                       </View>
