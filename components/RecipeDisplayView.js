@@ -78,7 +78,15 @@ export default function RecipeDisplayView({route, navigation}) {
 
       {recipes.map((recipe, i) => {
         return (
-          <Card key={i} style={styles.card}>
+          <Card 
+            key={i} 
+            style={styles.card}
+            onPress={() => {
+              navigation.navigate({
+                name: 'RecipeDetails',
+                params: {recipeID: recipe.id},
+              })
+            }}>
             <View style={{flexDirection: 'row'}}>
               <Image style={styles.tinyLogo} source={{uri: recipe.image}} />
               <Text

@@ -147,12 +147,13 @@ function RecipeDetails({route, navigation}) {
       },
     });
     const data = await response.json();
+    const instructions = data.message.analyzedInstructions.length == 0 ? []:data.message.analyzedInstructions[0].steps;
     let information = {
       title: data.message.title,
       ingredients: [],
       readyInMinutes: data.message.readyInMinutes,
       score: parseFloat((data.message.spoonacularScore / 20).toFixed(1)),
-      instructions: data.message.analyzedInstructions[0].steps,
+      instructions: instructions,
       difficulty: 'Easy',
     };
     if (information.readyInMinutes < 60) {
