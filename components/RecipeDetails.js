@@ -306,7 +306,9 @@ function RecipeDetails({route, navigation}) {
               <Card style={styles.ingredientList}>
                 <DataTable color="black">
                   <DataTable.Header>
-                    <DataTable.Title>Ingredient Name</DataTable.Title>
+                    <DataTable.Title style={{flex: 2}}>
+                      Ingredient Name
+                    </DataTable.Title>
                     <DataTable.Title numeric>Amount</DataTable.Title>
                     <DataTable.Title numeric>Current</DataTable.Title>
                   </DataTable.Header>
@@ -314,8 +316,15 @@ function RecipeDetails({route, navigation}) {
                     return (
                       <View key={item.name}>
                         <DataTable.Row>
-                          <DataTable.Cell>{item.name}</DataTable.Cell>
-                          <DataTable.Cell>
+                          <DataTable.Cell style={{flex: 2}}>
+                            {item.name}
+                          </DataTable.Cell>
+                          <DataTable.Cell
+                            style={{
+                              flexDirection: 'row',
+                              justifyContent: 'flex-end',
+                              textAlign: 'right',
+                            }}>
                             {item.targetAmount} {item.unit}
                           </DataTable.Cell>
                           <DataTable.Cell numeric>

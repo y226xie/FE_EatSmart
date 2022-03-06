@@ -14,6 +14,7 @@ import {Card} from 'react-native-paper';
 import CurrentStock from '../utils/CurrentStock';
 import * as Keychain from 'react-native-keychain';
 import {API_root} from '@env';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
@@ -24,7 +25,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgb(242, 243, 237)',
   },
   appArea: {
-    marginTop: screenHeight * 0.05,
+    marginTop: screenHeight * 0.1,
     marginHorizontal: 18,
   },
   title: {
@@ -119,7 +120,11 @@ function Main({navigation}) {
         ) : (
           <>
             <View>
-              <Text style={styles.title}>Welcome Back!</Text>
+              <View style={{flexDirection: 'row'}}>
+                <Text style={styles.title}>Welcome Back!</Text>
+                <Icon name={'camera'} size={20} color="black" />
+              </View>
+
               <Text style={styles.userName}>Fuhai!</Text>
             </View>
             <View style={{marginHorizontal: 18}}>

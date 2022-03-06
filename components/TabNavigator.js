@@ -39,7 +39,7 @@ function TabNavigator() {
       <Tab.Screen name="Home" component={HomeScreen} />
       {/* <Tab.Screen name="Menu" component={MenuScreen} /> */}
       <Tab.Screen name="Inventory" component={InventoryScreen} />
-      <Tab.Screen name="Camera" component={PickImageScreen} />
+      {/* <Tab.Screen name="Camera" component={PickImageScreen} /> */}
       <Tab.Screen name="Recipe" component={RecipeNavigation} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
