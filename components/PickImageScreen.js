@@ -27,6 +27,7 @@ import {
   DebugInstructions,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import {ScreenWidth, ScreenHeight} from 'react-native-elements/dist/helpers';
 
 const options = {
   title: 'Select Avatar',
@@ -167,41 +168,17 @@ export default class PickImageScreen extends Component {
   render() {
     return (
       <Fragment>
-        <StatusBar barStyle="dark-content" />
-        <SafeAreaView>
-          <View style={styles.body}>
-            <Text
-              style={{textAlign: 'center', fontSize: 20, paddingBottom: 10}}>
-              Pick Images from Camera & Gallery
-            </Text>
-            <View style={styles.ImageSections}>
-              <View>
-                {this.renderFileData()}
-                <Text style={{textAlign: 'center'}}>Base 64 String</Text>
-              </View>
-              <View>
-                {this.renderFileUri()}
-                <Text style={{textAlign: 'center'}}>File Uri</Text>
-              </View>
-            </View>
+        <View style={styles.btnParentSection}>
+          <TouchableOpacity onPress={this.openCamera} style={styles.btnSection}>
+            <Text style={styles.btnText}>Directly Launch Camera</Text>
+          </TouchableOpacity>
 
-            <View style={styles.btnParentSection}>
-              <TouchableOpacity
-                onPress={this.openCamera}
-                style={styles.btnSection}>
-                <Text style={styles.btnText}>Directly Launch Camera</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={this.openImageLibrary}
-                style={styles.btnSection}>
-                <Text style={styles.btnText}>
-                  Directly Launch Image Library
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </SafeAreaView>
+          <TouchableOpacity
+            onPress={this.openImageLibrary}
+            style={styles.btnSection}>
+            <Text style={styles.btnText}>Directly Launch Image Library</Text>
+          </TouchableOpacity>
+        </View>
       </Fragment>
     );
   }
@@ -239,18 +216,19 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   btnSection: {
-    width: 225,
-    height: 50,
-    backgroundColor: '#DCDCDC',
+    width: ScreenWidth * 0.55,
+    height: ScreenHeight * 0.05,
+    backgroundColor: 'rgb(255, 206,97)',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 3,
     marginBottom: 10,
+    borderWidth: 1,
   },
   btnText: {
     textAlign: 'center',
-    color: 'gray',
+    color: 'black',
     fontSize: 14,
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
 });

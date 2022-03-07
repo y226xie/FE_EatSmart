@@ -4,9 +4,10 @@ import {
   View,
   Text,
   StyleSheet,
-  Button,
   Dimensions,
   ActivityIndicator,
+  TouchableOpacity,
+  Modal,
 } from 'react-native';
 import {SearchBar} from 'react-native-elements';
 import RecipeRecommendation from '../utils/RecipeRecommendation';
@@ -15,6 +16,7 @@ import CurrentStock from '../utils/CurrentStock';
 import * as Keychain from 'react-native-keychain';
 import {API_root} from '@env';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import PickImageScreen from './PickImageScreen';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
@@ -50,21 +52,51 @@ const styles = StyleSheet.create({
   horizontal: {
     flexDirection: 'row',
   },
+  photoBtn: {
+    position: 'absolute',
+    right: 10,
+    zIndex: 10,
+    width: 45,
+    height: 45,
+    padding: 12,
+    borderRadius: 100,
+    backgroundColor: 'rgb(255, 206, 97)',
+  },
+  centerView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 20,
+  },
+  modalView: {
+    width: screenWidth * 0.83,
+    height: screenHeight * 0.3,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 50,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
 });
-const stock_items = [
-  {name: 'Yogurt', weight: '500g', expiry: '1 week'},
-  {name: 'Beef', weight: '1 box', expiry: '1 week'},
-  {name: 'Potato', weight: '4 boxes', expiry: '2 weeks'},
-];
+
 function Main({navigation}) {
   const [search, setSearch] = useState('');
-  const [status, setStatus] = useState({pending: true, recommendations: []});
-  const [ingredients, setIngredients] = useState({page: 0, items: []});
-  const [totalPage, setTotalPage] = useState(0);
-
   const updateSearch = search => {
     setSearch(search);
   };
+
+  const [status, setStatus] = useState({pending: true, recommendations: []});
+  const [ingredients, setIngredients] = useState({page: 0, items: []});
+  const [totalPage, setTotalPage] = useState(0);
+  const [visible, setVisible] = useState(false);
+  const showModal = () => setVisible(true);
+  const hideModal = () => setVisible(false);
 
   const getIngredientsPageNumber = userToken => {
     fetch(`${API_root}/storage/pageNumber`, {
@@ -120,13 +152,36 @@ function Main({navigation}) {
         ) : (
           <>
             <View>
+              <Modal animationType="slide" visible={visible} transparent={true}>
+                <View style={styles.centerView}>
+                  <View style={styles.modalView}>
+                    <Text
+                      style={{
+                        fontSize: 18,
+                        fontWeight: 'bold',
+                        marginBottom: 10,
+                        marginHorizontal: 20,
+                      }}>
+                      Upload Shopping Receipe for Scaning
+                    </Text>
+                    <TouchableOpacity
+                      onPress={hideModal}
+                      style={{position: 'absolute', right: 20, top: 20}}>
+                      <Icon name="remove" size={20} color="black" />
+                    </TouchableOpacity>
+                    <PickImageScreen />
+                  </View>
+                </View>
+              </Modal>
               <View style={{flexDirection: 'row'}}>
                 <Text style={styles.title}>Welcome Back!</Text>
-                <Icon name={'camera'} size={20} color="black" />
+                <TouchableOpacity style={styles.photoBtn} onPress={showModal}>
+                  <Icon name={'camera'} size={20} color="white" />
+                </TouchableOpacity>
               </View>
-
               <Text style={styles.userName}>Fuhai!</Text>
             </View>
+
             <View style={{marginHorizontal: 18}}>
               <SearchBar
                 inputStyle={{backgroundColor: 'white'}}

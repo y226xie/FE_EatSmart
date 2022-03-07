@@ -3,6 +3,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Main from './Main';
 import RecipeDetails from './RecipeDetails';
 import CookingSteps from './CookingSteps';
+import PickImageScreen from './PickImageScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,19 +19,24 @@ function HomeScreen({navigation}) {
         name="RecipeDetails"
         component={RecipeDetails}
         initialParams={{
-          recipeID:""
+          recipeID: '',
         }}
         options={{headerShown: false}}
       />
       <Stack.Screen
         name="CookingSteps"
         component={CookingSteps}
-        initialParams= {{
-          title: "",
+        initialParams={{
+          title: '',
           instructions: [],
           score: 0,
           readyInMinutes: 0,
         }}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="PickImageScreen"
+        component={PickImageScreen}
         options={{headerShown: false}}
       />
     </Stack.Navigator>
