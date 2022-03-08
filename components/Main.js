@@ -223,7 +223,12 @@ function Main({navigation}) {
             </View>
             <View>
               <Text style={styles.headerText}>Current Stock</Text>
-              <Card style={{marginHorizontal: 10, borderRadius: 5}}>
+              <Card
+                style={{
+                  marginHorizontal: 10,
+                  borderRadius: 5,
+                  marginBottom: 20,
+                }}>
                 <CurrentStock
                   ingredients={ingredients}
                   totalPage={totalPage}

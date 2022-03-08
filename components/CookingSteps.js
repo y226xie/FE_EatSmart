@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     zIndex: 10,
     alignSelf: 'stretch',
-    height: 100,
+    height: screenHeight * 0.2,
     marginHorizontal: 30,
     alignItems: 'center',
     backgroundColor: 'rgb(255, 255, 255)',
@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '400',
     marginTop: 20,
+    marginHorizontal: 10,
   },
   rating: {
     marginTop: 20,
@@ -78,18 +79,17 @@ const styles = StyleSheet.create({
 // });
 
 function CookingSteps({route, navigation}) {
-  
   const instructions = route.params.instructions;
   const score = route.params.score;
   const readyInMinutes = route.params.readyInMinutes;
   const title = route.params.title;
-  let difficulty = "";
+  let difficulty = '';
   if (readyInMinutes < 60) {
-    difficulty = "Easy";
+    difficulty = 'Easy';
   } else if (readyInMinutes < 120) {
-    difficulty = "Medium";
+    difficulty = 'Medium';
   } else {
-    difficulty = "Hard";
+    difficulty = 'Hard';
   }
 
   return (
@@ -104,18 +104,18 @@ function CookingSteps({route, navigation}) {
       </View>
 
       <View style={styles.foodInfo}>
-        <View style={{flexDirection: 'row'}}>
-          <Text style={styles.foodName}>{title}</Text>
-          <View style={{marginTop: 25, marginLeft: 20, flexDirection: 'row'}}>
-            <StarRating
-              disabled={true}
-              starSize={18}
-              rating={score}
-              fullStarColor={'rgb(240, 203, 94)'}
-            />
-            <Text style={{marginLeft: 10}}>{score}</Text>
-          </View>
+        <Text style={styles.foodName}>{title}</Text>
+        <View style={{marginTop: 25, marginLeft: 20, flexDirection: 'row'}}>
+          <Text>Rating: </Text>
+          <StarRating
+            disabled={true}
+            starSize={18}
+            rating={score}
+            fullStarColor={'rgb(240, 203, 94)'}
+          />
+          <Text style={{marginLeft: 10}}>{score}</Text>
         </View>
+
         <View style={{flexDirection: 'row', marginTop: 20}}>
           <Text> Difficulty: {difficulty} </Text>
           <Text> Time: {readyInMinutes} mins</Text>
@@ -126,7 +126,11 @@ function CookingSteps({route, navigation}) {
         <Text style={styles.cookingStepsText}>Cooking Steps</Text>
         {instructions.map((step, index) => {
           return (
-            <Steps currentStep={index + 1} key={index} description={step.step} />
+            <Steps
+              currentStep={index + 1}
+              key={index}
+              description={step.step}
+            />
           );
         })}
       </ScrollView>

@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     borderRadius: 15,
     marginVertical: 5,
-    height: screenHeight * 0.15,
+    height: screenHeight * 0.2,
     shadowColor: 'rgba(0, 0, 0, 0.1)',
     shadowOpacity: 0.8,
     shadowRadius: 15,
@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
     height: screenHeight * 0.1,
     marginLeft: 20,
     marginRight: 20,
+    marginTop: 20,
   },
   tag: {
     backgroundColor: '#FDE7B6',
@@ -249,13 +250,25 @@ export function IngredientInformation({onChange, ingredient}) {
 
       <Card style={styles.card}>
         <View style={{flexDirection: 'row', marginTop: 20}}>
-          <Image
-            source={{uri: image}}
-            style={styles.foodImage}
-          />
-
-          <View style={{flexShrink: 1}}>
-            <Text style={{fontSize: 16, fontWeight: 'bold', flexShrink: 1}}>
+          <Image source={{uri: image}} style={styles.foodImage} />
+          <TouchableOpacity
+            style={{position: 'absolute', right: 40}}
+            onPress={() => setIsModalOpen(true)}>
+            <Icon name={'pencil'} size={20} color="black" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleDelete}
+            style={{position: 'absolute', right: 10}}>
+            <Icon name="remove" size={20} color="black" />
+          </TouchableOpacity>
+          <View style={{flexShrink: 1, marginTop: 25}}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: 'bold',
+                flexShrink: 1,
+                marginRight: 20,
+              }}>
               {foodName}
             </Text>
             <Text style={{color: 'gray', fontWeight: '600', marginTop: 5}}>
@@ -268,16 +281,6 @@ export function IngredientInformation({onChange, ingredient}) {
               <Text style={styles.expiryDate}>{date.toLocaleDateString()}</Text>
             </View>
           </View>
-          <TouchableOpacity
-            style={{position: 'absolute', right: 40}}
-            onPress={() => setIsModalOpen(true)}>
-            <Icon name={'pencil'} size={20} color="black" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={handleDelete}
-            style={{position: 'absolute', right: 10}}>
-            <Icon name="remove" size={20} color="black" />
-          </TouchableOpacity>
         </View>
       </Card>
     </View>

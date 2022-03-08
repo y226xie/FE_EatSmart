@@ -13,17 +13,22 @@ function CurrentStock(props) {
   let itemList = props.ingredients.items.map((item, index) => {
     return (
       <DataTable.Row key={index}>
-        <DataTable.Cell>{item.name}</DataTable.Cell>
-        <DataTable.Cell numeric>{item.amount} {item.unit}</DataTable.Cell>
-        <DataTable.Cell numeric>{item.best_before}</DataTable.Cell>
+        <DataTable.Cell style={{flex: 4}}>{item.name}</DataTable.Cell>
+        <DataTable.Cell numeric>
+          {item.amount} {item.unit}
+        </DataTable.Cell>
       </DataTable.Row>
     );
   });
 
-  const label = `${props.ingredients.page+1} of ${props.totalPage}`
+  const label = `${props.ingredients.page + 1} of ${props.totalPage}`;
 
   return (
     <DataTable>
+      <DataTable.Header>
+        <DataTable.Title style={{flex: 3}}>Ingredient Name</DataTable.Title>
+        <DataTable.Title numeric>Amount</DataTable.Title>
+      </DataTable.Header>
       {itemList}
       <DataTable.Pagination
         page={props.ingredients.page}
