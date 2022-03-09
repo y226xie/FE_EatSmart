@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   Dimensions,
   Modal,
-  Button,
   Pressable,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
@@ -18,6 +17,7 @@ import {Card, TextInput} from 'react-native-paper';
 import Seperator from '../utils/Seperator';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import RadioGroup from 'react-native-radio-buttons-group';
+import ProfileButton from '../utils/ProfileButtons';
 
 const screenHeight = Dimensions.get('screen').height;
 const screenWidth = Dimensions.get('screen').width;
@@ -35,14 +35,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontSize: 30,
   },
-  logoutBtn: {
-    paddingHorizontal: 25,
-    paddingVertical: 10,
-    backgroundColor: '#FDE7B6',
-    borderRadius: 25,
-    color: 'black',
-    textAlign: 'center',
-  },
   profileImage: {
     width: 80,
     height: 80,
@@ -52,12 +44,23 @@ const styles = StyleSheet.create({
     borderColor: 'white',
     borderWidth: 3,
   },
+  logoutBtn: {
+    flexDirection: 'row',
+    backgroundColor: '#',
+    borderRadius: 10,
+    padding: 8,
+    marginHorizontal: screenWidth * 0.02,
+    marginVertical: 10,
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOpacity: 0.8,
+    shadowRadius: 15,
+    shadowOffset: {width: 1, height: 13},
+  },
   mycollection: {
     flexDirection: 'row',
     backgroundColor: 'white',
     borderRadius: 10,
-    padding: 10,
-    borderWidth: 1,
+    padding: 8,
     marginHorizontal: screenWidth * 0.02,
     marginVertical: 10,
     shadowColor: 'rgba(0, 0, 0, 0.1)',
@@ -113,6 +116,11 @@ const styles = StyleSheet.create({
     color: 'black',
     fontWeight: '500',
     textAlign: 'center',
+  },
+  btnText: {
+    marginTop: 7,
+    marginLeft: 10,
+    fontSize: 14,
   },
 });
 
@@ -251,12 +259,10 @@ function ProfileScreen({navigation}) {
             </TouchableOpacity>
           </View>
         </View>
-        <TouchableOpacity style={styles.mycollection}>
-          <AntDesign name="staro" size={20} />
-          <Text style={{marginTop: 2, marginLeft: 10, fontSize: 14}}>
-            My Collection
-          </Text>
-        </TouchableOpacity>
+
+        <ProfileButton buttonText="My Collection" buttonImage="staro" />
+        <ProfileButton buttonText="Account & Safety" buttonImage="user" />
+        <ProfileButton buttonText="Notification Settings" buttonImage="notification" />
 
         <View
           style={{marginVertical: 20, marginHorizontal: screenWidth * 0.02}}>
@@ -303,10 +309,31 @@ function ProfileScreen({navigation}) {
             </View>
           </Card>
         </View>
+        <Card>
+          <View></View>
+        </Card>
+        
 
-        <Text style={styles.logoutBtn} onPress={() => signOut()}>
-          Logout
-        </Text>
+        <TouchableOpacity style={styles.mycollection} onPress={() => signOut()}>
+          <View
+            style={{
+              flexDirection: 'row',
+              marginLeft: screenWidth * 0.3,
+            }}>
+            <View
+              style={{
+                borderRadius: 100,
+                backgroundColor: '#FDE7B6',
+                width: 30,
+                height: 30,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <AntDesign name="logout" size={20} color="gray" />
+            </View>
+            <Text style={styles.btnText}>Log out</Text>
+          </View>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );

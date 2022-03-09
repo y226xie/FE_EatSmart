@@ -102,6 +102,15 @@ const styles = StyleSheet.create({
     shadowRadius: 15,
     shadowOffset: {width: 1, height: 13},
   },
+  activityIndicatorContainer: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: screenHeight * 0.5,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
 
 function RecipeDetails({route, navigation}) {
@@ -147,7 +156,10 @@ function RecipeDetails({route, navigation}) {
       },
     });
     const data = await response.json();
-    const instructions = data.message.analyzedInstructions.length == 0 ? []:data.message.analyzedInstructions[0].steps;
+    const instructions =
+      data.message.analyzedInstructions.length == 0
+        ? []
+        : data.message.analyzedInstructions[0].steps;
     let information = {
       title: data.message.title,
       ingredients: [],
@@ -218,149 +230,141 @@ function RecipeDetails({route, navigation}) {
 
   return (
     <ScrollView>
-      <View style={styles.container}>
-        {recipeData.pending ? (
-          <ActivityIndicator />
-        ) : (
-          <>
-            <View>
-              <Image
-                style={styles.backgroudImage}
-                source={RecipeDetailsImage}
+      {recipeData.pending ? (
+        <View style={styles.activityIndicatorContainer}>
+          <ActivityIndicator size="large" color="black" />
+        </View>
+      ) : (
+        <View style={styles.container}>
+          <View>
+            <Image style={styles.backgroudImage} source={RecipeDetailsImage} />
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}>
+              <Ionicons name="arrow-back" size={30} color="white" />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.foodInfo}>
+            <Text style={styles.foodName}>{recipeData.information.title}</Text>
+            <View style={{marginTop: 25, marginLeft: 20, flexDirection: 'row'}}>
+              <Text>Rating: </Text>
+              <StarRating
+                disabled={true}
+                starSize={18}
+                rating={recipeData.information.score}
+                fullStarColor={'rgb(240, 203, 94)'}
               />
-              <TouchableOpacity
-                style={styles.backButton}
-                onPress={() => navigation.goBack()}>
-                <Ionicons name="arrow-back" size={30} color="white" />
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.foodInfo}>
-              <Text style={styles.foodName}>
-                {recipeData.information.title}
+              <Text style={{marginLeft: 10}}>
+                {recipeData.information.score}
               </Text>
-              <View
-                style={{marginTop: 25, marginLeft: 20, flexDirection: 'row'}}>
-                <Text>Rating: </Text>
-                <StarRating
-                  disabled={true}
-                  starSize={18}
-                  rating={recipeData.information.score}
-                  fullStarColor={'rgb(240, 203, 94)'}
-                />
-                <Text style={{marginLeft: 10}}>
-                  {recipeData.information.score}
-                </Text>
-              </View>
-              <View style={{flexDirection: 'row', marginBottom: 20}}>
-                <Text> Difficulity: {recipeData.information.difficulty} </Text>
-                <Text> Time: {recipeData.information.readyInMinutes} mins</Text>
-              </View>
             </View>
-
-            <View style={styles.toolsInfo}>
-              <View style={{marginLeft: 30}}>
-                <View style={{flexDirection: 'row', marginTop: 20}}>
-                  <FontAwesome5Icon name="utensils" size={20} />
-                  <Text
-                    style={{fontSize: 18, fontWeight: '400', marginLeft: 20}}>
-                    Utentils
-                  </Text>
-                </View>
-                <Text style={{marginTop: 20, marginHorizontal: 10}}>
-                  Cutting Board, Knife, 2 bowls, Cooking spoon, Towels
-                </Text>
-                <View style={{flexDirection: 'row', marginTop: 20}}>
-                  <Ionicons name="fast-food" size={20} />
-                  <Text
-                    style={{fontSize: 18, fontWeight: '400', marginLeft: 20}}>
-                    Nutrition Per Serving
-                  </Text>
-                </View>
-                <View style={{flexDirection: 'row'}}>
-                  <View style={{marginTop: 20, marginHorizontal: 20}}>
-                    <Text>Cal</Text>
-                    <Text style={{marginTop: 10}}>{nutrition.cal}</Text>
-                  </View>
-                  <View style={{marginTop: 20, marginHorizontal: 20}}>
-                    <Text>Fat</Text>
-                    <Text style={{marginTop: 10}}>{nutrition.fat}</Text>
-                  </View>
-                  <View style={{marginTop: 20, marginHorizontal: 20}}>
-                    <Text>Carb</Text>
-                    <Text style={{marginTop: 10}}>{nutrition.carb}</Text>
-                  </View>
-                  <View style={{marginTop: 20, marginHorizontal: 20}}>
-                    <Text>Protein</Text>
-                    <Text style={{marginTop: 10}}>{nutrition.protein}</Text>
-                  </View>
-                </View>
-              </View>
-            </View>
-
-            <View style={styles.ingredients}>
-              <Text style={{fontSize: 18, fontWeight: '500'}}>
-                Required Ingredients
-              </Text>
-
-              <Card style={styles.ingredientList}>
-                <DataTable color="black">
-                  <DataTable.Header>
-                    <DataTable.Title style={{flex: 2}}>
-                      Ingredient Name
-                    </DataTable.Title>
-                    <DataTable.Title numeric>Amount</DataTable.Title>
-                    <DataTable.Title numeric>Current</DataTable.Title>
-                  </DataTable.Header>
-                  {recipeData.information.ingredients.map(item => {
-                    return (
-                      <View key={item.name}>
-                        <DataTable.Row>
-                          <DataTable.Cell style={{flex: 2}}>
-                            {item.name}
-                          </DataTable.Cell>
-                          <DataTable.Cell
-                            style={{
-                              flexDirection: 'row',
-                              justifyContent: 'flex-end',
-                              textAlign: 'right',
-                            }}>
-                            {item.targetAmount} {item.unit}
-                          </DataTable.Cell>
-                          <DataTable.Cell numeric>
-                            {item.currentAmount} {item.currentUnit}
-                          </DataTable.Cell>
-                        </DataTable.Row>
-                      </View>
-                    );
-                  })}
-                </DataTable>
-              </Card>
-            </View>
-
             <View style={{flexDirection: 'row', marginBottom: 20}}>
-              <TouchableOpacity style={styles.collect}>
-                <Ionicons name="heart-outline" size={30} color="black" />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate({
-                    name: 'CookingSteps',
-                    params: {
-                      title: recipeData.information.title,
-                      instructions: recipeData.information.instructions,
-                      score: recipeData.information.score,
-                      readyInMinutes: recipeData.information.readyInMinutes,
-                    },
-                  })
-                }
-                style={styles.cookingBtn}>
-                <Text style={{fontSize: 15}}>Start Cooking</Text>
-              </TouchableOpacity>
+              <Text> Difficulity: {recipeData.information.difficulty} </Text>
+              <Text> Time: {recipeData.information.readyInMinutes} mins</Text>
             </View>
-          </>
-        )}
-      </View>
+          </View>
+
+          <View style={styles.toolsInfo}>
+            <View style={{marginLeft: 30}}>
+              <View style={{flexDirection: 'row', marginTop: 20}}>
+                <FontAwesome5Icon name="utensils" size={20} />
+                <Text style={{fontSize: 18, fontWeight: '400', marginLeft: 20}}>
+                  Utentils
+                </Text>
+              </View>
+              <Text style={{marginTop: 20, marginHorizontal: 10}}>
+                Cutting Board, Knife, 2 bowls, Cooking spoon, Towels
+              </Text>
+              <View style={{flexDirection: 'row', marginTop: 20}}>
+                <Ionicons name="fast-food" size={20} />
+                <Text style={{fontSize: 18, fontWeight: '400', marginLeft: 20}}>
+                  Nutrition Per Serving
+                </Text>
+              </View>
+              <View style={{flexDirection: 'row'}}>
+                <View style={{marginTop: 20, marginHorizontal: 20}}>
+                  <Text>Cal</Text>
+                  <Text style={{marginTop: 10}}>{nutrition.cal}</Text>
+                </View>
+                <View style={{marginTop: 20, marginHorizontal: 20}}>
+                  <Text>Fat</Text>
+                  <Text style={{marginTop: 10}}>{nutrition.fat}</Text>
+                </View>
+                <View style={{marginTop: 20, marginHorizontal: 20}}>
+                  <Text>Carb</Text>
+                  <Text style={{marginTop: 10}}>{nutrition.carb}</Text>
+                </View>
+                <View style={{marginTop: 20, marginHorizontal: 20}}>
+                  <Text>Protein</Text>
+                  <Text style={{marginTop: 10}}>{nutrition.protein}</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.ingredients}>
+            <Text style={{fontSize: 18, fontWeight: '500'}}>
+              Required Ingredients
+            </Text>
+
+            <Card style={styles.ingredientList}>
+              <DataTable color="black">
+                <DataTable.Header>
+                  <DataTable.Title style={{flex: 2}}>
+                    Ingredient Name
+                  </DataTable.Title>
+                  <DataTable.Title numeric>Amount</DataTable.Title>
+                  <DataTable.Title numeric>Current</DataTable.Title>
+                </DataTable.Header>
+                {recipeData.information.ingredients.map(item => {
+                  return (
+                    <View key={item.name}>
+                      <DataTable.Row>
+                        <DataTable.Cell style={{flex: 2}}>
+                          {item.name}
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          style={{
+                            flexDirection: 'row',
+                            justifyContent: 'flex-end',
+                            textAlign: 'right',
+                          }}>
+                          {item.targetAmount} {item.unit}
+                        </DataTable.Cell>
+                        <DataTable.Cell numeric>
+                          {item.currentAmount} {item.currentUnit}
+                        </DataTable.Cell>
+                      </DataTable.Row>
+                    </View>
+                  );
+                })}
+              </DataTable>
+            </Card>
+          </View>
+
+          <View style={{flexDirection: 'row', marginBottom: 20}}>
+            <TouchableOpacity style={styles.collect}>
+              <Ionicons name="heart-outline" size={30} color="black" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate({
+                  name: 'CookingSteps',
+                  params: {
+                    title: recipeData.information.title,
+                    instructions: recipeData.information.instructions,
+                    score: recipeData.information.score,
+                    readyInMinutes: recipeData.information.readyInMinutes,
+                  },
+                })
+              }
+              style={styles.cookingBtn}>
+              <Text style={{fontSize: 15}}>Start Cooking</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
     </ScrollView>
   );
 }

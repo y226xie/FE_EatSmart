@@ -15,7 +15,7 @@ import * as Keychain from 'react-native-keychain';
 import {TextInput} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DatePicker from 'react-native-date-picker';
-import {API_root} from '@env'
+import {API_root} from '@env';
 
 const screenHeight = Dimensions.get('screen').height;
 const screenWidth = Dimensions.get('screen').width;
@@ -138,15 +138,12 @@ export function InventoryScreen() {
     userToken = await Keychain.getGenericPassword();
     try {
       setIsLoading(true);
-      const response = await fetch(
-        `${API_root}/storage/ingredients`,
-        {
-          headers: {
-            Authorization: `Bearer ${userToken.password}`,
-            page: '1',
-          },
+      const response = await fetch(`${API_root}/storage/ingredients`, {
+        headers: {
+          Authorization: `Bearer ${userToken.password}`,
+          page: '1',
         },
-      );
+      });
       const json = await response.json();
       setIngredients(json.message);
     } catch (error) {
