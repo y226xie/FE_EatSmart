@@ -4,6 +4,7 @@ import RecipeSearchView from './RecipeSearchView';
 import RecipeDisplayView from './RecipeDisplayView';
 import RecipeDetails from './RecipeDetails';
 import CookingSteps from './CookingSteps';
+import RecipeFilterView from './RecipeFilterView';
 
 const Stack = createNativeStackNavigator();
 
@@ -12,7 +13,7 @@ export default function RecipeNavigation({navigation}) {
     <Stack.Navigator>
       <Stack.Screen
         name="RecipeSearch"
-        component={RecipeSearchView}
+        component={RecipeFilterView}
         options={{headerShown: false}}
       />
       <Stack.Screen
