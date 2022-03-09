@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Modal,
   Pressable,
+  RefreshControl,
 } from 'react-native';
 import {IngredientInformation} from './IngredientInformation';
 import * as Keychain from 'react-native-keychain';
@@ -95,15 +96,16 @@ const styles = StyleSheet.create({
   },
 });
 
-export function InventoryScreen() {
+export function InventoryScreen({navigation}) {
   const [ingredients, setIngredients] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [foodName, setFoodName] = useState('');
   const [category, setCategory] = useState('');
   const [quantity, setQuantity] = useState('');
   const [date, setDate] = useState(new Date());
   const [open, setOpen] = useState(false);
+  const [refreshing, setRefreshing] = useState(true);
 
   const handleFormSubmit = async () => {
     try {
@@ -137,7 +139,7 @@ export function InventoryScreen() {
   getIngredients = async () => {
     userToken = await Keychain.getGenericPassword();
     try {
-      setIsLoading(true);
+      // setIsLoading(true);
       const response = await fetch(`${API_root}/storage/ingredients`, {
         headers: {
           Authorization: `Bearer ${userToken.password}`,
@@ -145,11 +147,12 @@ export function InventoryScreen() {
         },
       });
       const json = await response.json();
+      setRefreshing(false);
       setIngredients(json.message);
     } catch (error) {
       console.log(error.message);
     } finally {
-      setIsLoading(false);
+      // setIsLoading(false);
     }
   };
 
@@ -159,111 +162,113 @@ export function InventoryScreen() {
 
   return (
     <View style={styles.container}>
-      {isLoading ? (
-        <ActivityIndicator />
-      ) : (
-        <ScrollView style={styles.appArea}>
-          <Text style={styles.title}>Ingredient Information</Text>
-          {ingredients ? (
-            <View>
-              {ingredients.map((t, i) => {
-                return (
-                  <IngredientInformation
-                    key={i}
-                    ingredient={t}
-                    onChange={this.getIngredients}
-                  />
-                );
-              })}
-            </View>
-          ) : (
-            <>{/* add error handling here */}</>
-          )}
+      {refreshing ? <ActivityIndicator /> : null}
 
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={isModalOpen}
-            onRequestClose={() => {
-              setIsModalOpen(false);
-            }}>
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <Text style={styles.modalText}>Add New Ingredient Info</Text>
-
-                <TextInput
-                  mode="outlined"
-                  label="FoodName"
-                  value={foodName}
-                  onChangeText={setFoodName}
-                  style={{width: screenWidth * 0.725}}
+      <ScrollView
+        style={styles.appArea}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={getIngredients} />
+        }>
+        <Text style={styles.title}>Ingredient Information</Text>
+        {ingredients ? (
+          <View>
+            {ingredients.map((t, i) => {
+              return (
+                <IngredientInformation
+                  key={i}
+                  ingredient={t}
+                  onChange={this.getIngredients}
                 />
+              );
+            })}
+          </View>
+        ) : (
+          <>{/* add error handling here */}</>
+        )}
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={isModalOpen}
+          onRequestClose={() => {
+            setIsModalOpen(false);
+          }}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>Add New Ingredient Info</Text>
+
+              <TextInput
+                mode="outlined"
+                label="FoodName"
+                value={foodName}
+                onChangeText={setFoodName}
+                style={{width: screenWidth * 0.725}}
+              />
+              <TextInput
+                mode="outlined"
+                label="Category"
+                value={category}
+                onChangeText={setCategory}
+                style={{width: screenWidth * 0.725, marginVertical: 5}}
+              />
+              <TextInput
+                mode="outlined"
+                label="Quantity"
+                value={quantity}
+                onChangeText={setQuantity}
+                keyboardType="numeric"
+                style={{width: screenWidth * 0.725, marginVertical: 5}}
+              />
+
+              <View style={{flexDirection: 'row'}}>
                 <TextInput
                   mode="outlined"
-                  label="Category"
-                  value={category}
-                  onChangeText={setCategory}
+                  label="Best Before"
+                  value={date.toLocaleDateString()}
+                  editable={false}
                   style={{width: screenWidth * 0.725, marginVertical: 5}}
                 />
-                <TextInput
-                  mode="outlined"
-                  label="Quantity"
-                  value={quantity}
-                  onChangeText={setQuantity}
-                  keyboardType="numeric"
-                  style={{width: screenWidth * 0.725, marginVertical: 5}}
+                <TouchableOpacity
+                  style={{position: 'absolute', right: 30, marginTop: 25}}
+                  onPress={() => setOpen(true)}>
+                  <Icon name={'pencil'} size={20} color="black" />
+                </TouchableOpacity>
+                <DatePicker
+                  modal
+                  mode="date"
+                  open={open}
+                  date={date}
+                  locale="en_CA"
+                  onConfirm={date => {
+                    setOpen(false);
+                    setDate(date);
+                  }}
+                  onCancel={() => {
+                    setOpen(false);
+                  }}
                 />
+              </View>
 
-                <View style={{flexDirection: 'row'}}>
-                  <TextInput
-                    mode="outlined"
-                    label="Best Before"
-                    value={date.toLocaleDateString()}
-                    editable={false}
-                    style={{width: screenWidth * 0.725, marginVertical: 5}}
-                  />
-                  <TouchableOpacity
-                    style={{position: 'absolute', right: 30, marginTop: 25}}
-                    onPress={() => setOpen(true)}>
-                    <Icon name={'pencil'} size={20} color="black" />
-                  </TouchableOpacity>
-                  <DatePicker
-                    modal
-                    mode="date"
-                    open={open}
-                    date={date}
-                    locale="en_CA"
-                    onConfirm={date => {
-                      setOpen(false);
-                      setDate(date);
-                    }}
-                    onCancel={() => {
-                      setOpen(false);
-                    }}
-                  />
-                </View>
-
-                <View style={{flexDirection: 'row', marginTop: 5}}>
-                  <Pressable
-                    style={styles.buttonSubmit}
-                    onPress={handleFormSubmit}>
-                    <Text style={styles.textStyle}>Submit</Text>
-                  </Pressable>
-                  <Pressable style={styles.buttonCancel} onPress={handleCancel}>
-                    <Text style={styles.textStyle}>Cancel</Text>
-                  </Pressable>
-                </View>
+              <View style={{flexDirection: 'row', marginTop: 5}}>
+                <Pressable
+                  style={styles.buttonSubmit}
+                  onPress={handleFormSubmit}>
+                  <Text style={styles.textStyle}>Submit</Text>
+                </Pressable>
+                <Pressable style={styles.buttonCancel} onPress={handleCancel}>
+                  <Text style={styles.textStyle}>Cancel</Text>
+                </Pressable>
               </View>
             </View>
-          </Modal>
+          </View>
+        </Modal>
 
-          <TouchableOpacity
-            style={styles.addBtn}
-            onPress={() => setIsModalOpen(true)}>
-            <Text style={{fontSize: 15}}>Add More Item</Text>
-          </TouchableOpacity>
-        </ScrollView>
-      )}
+        <TouchableOpacity
+          style={styles.addBtn}
+          onPress={() => setIsModalOpen(true)}>
+          <Text style={{fontSize: 15}}>Add More Item</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   );
 }

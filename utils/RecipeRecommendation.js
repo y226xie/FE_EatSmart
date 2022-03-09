@@ -27,7 +27,7 @@ function RecipeRecommendation({onPress, foodName, difficulity, foodImageUrl}) {
         }}>
         {foodName}
       </Text>
-      <View style={{marginLeft: 100}}>
+      <View style={{marginHorizontal: 50}}>
         <Image
           style={{
             width: screenWidth * 0.2,

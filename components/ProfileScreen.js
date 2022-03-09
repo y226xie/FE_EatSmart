@@ -18,6 +18,7 @@ import Seperator from '../utils/Seperator';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import RadioGroup from 'react-native-radio-buttons-group';
 import ProfileButton from '../utils/ProfileButtons';
+import DropDownFilterView from './DropdownFilterView';
 
 const screenHeight = Dimensions.get('screen').height;
 const screenWidth = Dimensions.get('screen').width;
@@ -137,12 +138,22 @@ const radioButtonsData = [
   },
 ];
 
+// const cuisines = [
+//   {label: 'African', value: 'african'},
+//   {label: 'American', value: 'american'},
+//   {label: 'British', value: 'british'},
+//   {label: 'Caribbean', value: 'caribbean'},
+//   {label: 'Chinese', value: 'chinese'},
+//   {label: 'European', value: 'european'},
+// ];
+
 function ProfileScreen({navigation}) {
   const [radioButtons, setRadioButtons] = useState(radioButtonsData);
   const [height, setHeight] = useState(177);
   const [weight, setWeight] = useState(55);
   const [age, setAge] = useState(21);
   const [gender, setGender] = useState('Male');
+  const [selectedCuisines, setSelectedCuisines] = useState([]);
 
   //Formula for calcualte daily calories consumption
   const BMR =
@@ -196,7 +207,12 @@ function ProfileScreen({navigation}) {
                 value={height + ''}
                 keyboardType="numeric"
                 onChangeText={setHeight}
-                style={{width: screenWidth * 0.5, marginVertical: 5}}
+                style={{
+                  width: screenWidth * 0.5,
+                  height: screenHeight * 0.05,
+                  marginVertical: 5,
+                  marginHorizontal: 20,
+                }}
               />
               <TextInput
                 mode="outlined"
@@ -204,7 +220,12 @@ function ProfileScreen({navigation}) {
                 value={weight + ''}
                 keyboardType="numeric"
                 onChangeText={setWeight}
-                style={{width: screenWidth * 0.5, marginVertical: 5}}
+                style={{
+                  width: screenWidth * 0.5,
+                  height: screenHeight * 0.05,
+                  marginVertical: 5,
+                  marginHorizontal: 20,
+                }}
               />
               <TextInput
                 mode="outlined"
@@ -212,15 +233,21 @@ function ProfileScreen({navigation}) {
                 value={age + ''}
                 keyboardType="numeric"
                 onChangeText={setAge}
-                style={{width: screenWidth * 0.5, marginVertical: 5}}
+                style={{
+                  width: screenWidth * 0.5,
+                  height: screenHeight * 0.05,
+                  marginVertical: 5,
+                  marginHorizontal: 20,
+                }}
               />
-              <TextInput
-                mode="outlined"
-                label="Basal Metabolic Rate"
-                value={BMR + ''}
-                editable={false}
-                style={{width: screenWidth * 0.5, marginVertical: 5}}
-              />
+              {/* <DropDownFilterView
+                items={cuisines}
+                value={selectedCuisines}
+                setValue={setSelectedCuisines}
+                zIndex={4000}
+                zIndexInverse={1000}
+                placeholder={'Pick your Allergy'}
+              /> */}
               <View style={{flexDirection: 'row', marginTop: 5}}>
                 <Pressable style={styles.buttonSubmit} onPress={handleSubmit}>
                   <Text style={styles.textStyle}>Submit</Text>
@@ -262,7 +289,10 @@ function ProfileScreen({navigation}) {
 
         <ProfileButton buttonText="My Collection" buttonImage="staro" />
         <ProfileButton buttonText="Account & Safety" buttonImage="user" />
-        <ProfileButton buttonText="Notification Settings" buttonImage="notification" />
+        <ProfileButton
+          buttonText="Notification Settings"
+          buttonImage="notification"
+        />
 
         <View
           style={{marginVertical: 20, marginHorizontal: screenWidth * 0.02}}>
@@ -307,12 +337,13 @@ function ProfileScreen({navigation}) {
                 {BMR} Calories/Day
               </Text>
             </View>
+            <Seperator />
+            <View style={styles.healthInfoRow}>
+              <Text style={{marginLeft: 10}}>Allergy</Text>
+              <Text style={{position: 'absolute', right: 10}}>N/A</Text>
+            </View>
           </Card>
         </View>
-        <Card>
-          <View></View>
-        </Card>
-        
 
         <TouchableOpacity style={styles.mycollection} onPress={() => signOut()}>
           <View

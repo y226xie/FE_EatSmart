@@ -1,16 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
+import {View} from 'react-native';
 
-export default function DropDownFilterView({items, value, setValue, zIndex, zIndexInverse}) {
-    const [open, setOpen] = useState(false);
-    
-    // useEffect(() => {
-    //     setIsOpened(key)
-    // }, [open])
+export default function DropDownFilterView({
+  items,
+  value,
+  setValue,
+  zIndex,
+  zIndexInverse,
+  placeholder,
+}) {
+  const [open, setOpen] = useState(false);
 
-    return (
-        <>
+  return (
+    <View style={{marginHorizontal: 15, zIndex: zIndex}}>
       <DropDownPicker
+        style={{marginVertical: 10}}
+        placeholderStyle={{fontWeight: '500'}}
+        badgeColors="#FDE7B6"
+        badgeDotColors="black"
         searchable={true}
         multiple={true}
         itemSeparator={true}
@@ -26,7 +34,8 @@ export default function DropDownFilterView({items, value, setValue, zIndex, zInd
         // setItems={setItems}
         zIndex={zIndex}
         zIndexInverse={zIndexInverse}
+        placeholder={placeholder}
       />
-      </>
+    </View>
   );
 }
