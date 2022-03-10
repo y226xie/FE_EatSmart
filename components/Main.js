@@ -18,7 +18,7 @@ import * as Keychain from 'react-native-keychain';
 import {API_root} from '@env';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import PickImageScreen from './PickImageScreen';
-// import AwesomeAlert from 'react-native-awesome-alerts';
+import AwesomeAlert from 'react-native-awesome-alerts';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
@@ -101,7 +101,22 @@ function Main({navigation}) {
   const hideModal = () => setVisible(false);
 
   const [alertVisible, setAlertVisible] = useState(false);
-  const showAlert = () => setAlertVisible(true);
+  const [alertMsg, setAlertMsg] = useState({
+    title: 'Sorry!',
+    msg: 'There is an issue with your receipt, please try again later!',
+    btnText: 'Try Again Later',
+  });
+
+  const showAlert = isSuccess => {
+    if (isSuccess) {
+      setAlertMsg({
+        title: 'Congraluations!',
+        msg: 'Your receipt has been uploaded successfully!',
+        btnText: 'Tap to dismiss',
+      });
+    }
+    setAlertVisible(true);
+  };
   const hideAlert = () => setAlertVisible(false);
 
   const [refreshing, setRefreshing] = useState(true);
@@ -168,6 +183,19 @@ function Main({navigation}) {
         <View style={styles.appArea}>
           <>
             <View>
+              <AwesomeAlert
+                show={alertVisible}
+                showProgress={false}
+                title={alertMsg.title}
+                message={alertMsg.msg}
+                closeOnTouchOutside={true}
+                closeOnHardwareBackPress={false}
+                showConfirmButton={true}
+                confirmText={alertMsg.btnText}
+                confirmButtonColor="#DD6B55"
+                onCancelPressed={hideAlert}
+                onConfirmPressed={hideAlert}
+              />
               <Modal animationType="slide" visible={visible} transparent={true}>
                 <View style={styles.centerView}>
                   <View style={styles.modalView}>
@@ -185,21 +213,7 @@ function Main({navigation}) {
                       style={{position: 'absolute', right: 20, top: 20}}>
                       <Icon name="remove" size={20} color="black" />
                     </TouchableOpacity>
-                    {/* <AwesomeAlert
-                      show={alertVisible}
-                      showProgress={false}
-                      title="AwesomeAlert"
-                      message="I have a message for you!"
-                      closeOnTouchOutside={true}
-                      closeOnHardwareBackPress={false}
-                      showCancelButton={true}
-                      showConfirmButton={true}
-                      cancelText="No, cancel"
-                      confirmText="Yes, delete it"
-                      confirmButtonColor="#DD6B55"
-                      onCancelPressed={hideAlert}
-                      onConfirmPressed={hideAlert}
-                    /> */}
+
                     <PickImageScreen
                       closeImageScreen={hideModal}
                       showAlert={showAlert}

@@ -1,5 +1,4 @@
 import React, {Fragment, Component} from 'react';
-// import * as ImagePicker from 'react-native-image-picker';
 import ImagePicker, {
   launchImageLibrary,
   launchCamera,
@@ -8,35 +7,17 @@ import {API_root} from '@env';
 import * as Keychain from 'react-native-keychain';
 
 import {
-  SafeAreaView,
   StyleSheet,
-  ScrollView,
   View,
   Text,
-  StatusBar,
   Image,
-  Button,
   Dimensions,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {ScreenWidth, ScreenHeight} from 'react-native-elements/dist/helpers';
-
-const options = {
-  title: 'Select Avatar',
-  customButtons: [{name: 'fb', title: 'Choose Photo from Facebook'}],
-  storageOptions: {
-    skipBackup: true,
-    path: 'images',
-  },
-};
 
 export default class PickImageScreen extends Component {
   constructor(props) {
@@ -48,7 +29,10 @@ export default class PickImageScreen extends Component {
       },
       fileData: '',
       fileUri: '',
+      pending: false,
     };
+
+    this.props.showAlert = this.props.showAlert.bind(this);
   }
 
   createFormData = (photo, body = {}) => {
@@ -69,26 +53,33 @@ export default class PickImageScreen extends Component {
   };
 
   handleUploadPhoto = async photo => {
+    this.setState({pending: true});
     const imageData = this.createFormData(photo, {userId: '123'});
     const userToken = await Keychain.getGenericPassword();
 
-    fetch(`${API_root}/storage/image`, {
-      method: 'POST',
-      body: imageData,
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'multipart/form-data',
-        Authorization: `Bearer ${userToken.password}`,
-      },
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log('response', data);
-      })
-      .catch(error => {
-        console.log('error', error);
-      })
-      .finally(this.props.closeImageScreen());
+    try {
+      const response = await fetch(`${API_root}/storage/image`, {
+        method: 'POST',
+        body: imageData,
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${userToken.password}`,
+        },
+      });
+
+      const json = await response.json();
+      this.setState({pending: false});
+      this.props.closeImageScreen();
+      this.props.showAlert(true);
+      console.log('response', json);
+    } catch (error) {
+      this.setState({pending: false});
+      this.props.closeImageScreen();
+      this.props.showAlert(false);
+      console.log('response', error);
+    } finally {
+    }
   };
 
   openCamera = () => {
@@ -173,17 +164,23 @@ export default class PickImageScreen extends Component {
   render() {
     return (
       <Fragment>
-        <View style={styles.btnParentSection}>
-          <TouchableOpacity onPress={this.openCamera} style={styles.btnSection}>
-            <Text style={styles.btnText}>Directly Launch Camera</Text>
-          </TouchableOpacity>
+        {this.state.pending ? (
+          <ActivityIndicator size={'large'} color={'black'} />
+        ) : (
+          <View style={styles.btnParentSection}>
+            <TouchableOpacity
+              onPress={this.openCamera}
+              style={styles.btnSection}>
+              <Text style={styles.btnText}>Directly Launch Camera</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={this.openImageLibrary}
-            style={styles.btnSection}>
-            <Text style={styles.btnText}>Directly Launch Image Library</Text>
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity
+              onPress={this.openImageLibrary}
+              style={styles.btnSection}>
+              <Text style={styles.btnText}>Directly Launch Image Library</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </Fragment>
     );
   }
