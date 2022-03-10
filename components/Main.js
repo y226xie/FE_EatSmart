@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Modal,
+  RefreshControl,
 } from 'react-native';
 import {SearchBar} from 'react-native-elements';
 import RecipeRecommendation from '../utils/RecipeRecommendation';
@@ -17,6 +18,7 @@ import * as Keychain from 'react-native-keychain';
 import {API_root} from '@env';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import PickImageScreen from './PickImageScreen';
+// import AwesomeAlert from 'react-native-awesome-alerts';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
@@ -91,12 +93,18 @@ function Main({navigation}) {
     setSearch(search);
   };
 
-  const [status, setStatus] = useState({pending: true, recommendations: []});
+  const [status, setStatus] = useState({recommendations: []});
   const [ingredients, setIngredients] = useState({page: 0, items: []});
   const [totalPage, setTotalPage] = useState(0);
   const [visible, setVisible] = useState(false);
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
+
+  const [alertVisible, setAlertVisible] = useState(false);
+  const showAlert = () => setAlertVisible(true);
+  const hideAlert = () => setAlertVisible(false);
+
+  const [refreshing, setRefreshing] = useState(true);
 
   const getIngredientsPageNumber = userToken => {
     fetch(`${API_root}/storage/pageNumber`, {
@@ -125,31 +133,39 @@ function Main({navigation}) {
     getIngredients(userToken, currPage);
   };
 
-  useEffect(() => {
-    setStatus({pending: true, recommendations: []});
-    Keychain.getGenericPassword().then(userToken => {
-      getIngredientsPageNumber(userToken);
-      getIngredients(userToken, 0);
-
-      fetch(`${API_root}/meal/recipeByIngredient`, {
+  const refreshHandler = async () => {
+    userToken = await Keychain.getGenericPassword();
+    getIngredientsPageNumber(userToken);
+    getIngredients(userToken, 0);
+    try {
+      const response = await fetch(`${API_root}/meal/recipeByIngredient`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${userToken.password}`,
         },
-      })
-        .then(resp => resp.json())
-        .then(data =>
-          setStatus({pending: false, recommendations: data.message}),
-        );
-    });
+      });
+      const json = await response.json();
+      console.log(json.message);
+      setStatus({recommendations: json.message});
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    refreshHandler();
   }, []);
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.appArea}>
-        {status.pending ? (
-          <ActivityIndicator />
-        ) : (
+    <ScrollView
+      style={styles.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={refreshHandler} />
+      }>
+      {refreshing ? null : (
+        <View style={styles.appArea}>
           <>
             <View>
               <Modal animationType="slide" visible={visible} transparent={true}>
@@ -169,7 +185,25 @@ function Main({navigation}) {
                       style={{position: 'absolute', right: 20, top: 20}}>
                       <Icon name="remove" size={20} color="black" />
                     </TouchableOpacity>
-                    <PickImageScreen closeImageScreen={hideModal}/>
+                    {/* <AwesomeAlert
+                      show={alertVisible}
+                      showProgress={false}
+                      title="AwesomeAlert"
+                      message="I have a message for you!"
+                      closeOnTouchOutside={true}
+                      closeOnHardwareBackPress={false}
+                      showCancelButton={true}
+                      showConfirmButton={true}
+                      cancelText="No, cancel"
+                      confirmText="Yes, delete it"
+                      confirmButtonColor="#DD6B55"
+                      onCancelPressed={hideAlert}
+                      onConfirmPressed={hideAlert}
+                    /> */}
+                    <PickImageScreen
+                      closeImageScreen={hideModal}
+                      showAlert={showAlert}
+                    />
                   </View>
                 </View>
               </Modal>
@@ -237,8 +271,8 @@ function Main({navigation}) {
               </Card>
             </View>
           </>
-        )}
-      </View>
+        </View>
+      )}
     </ScrollView>
   );
 }

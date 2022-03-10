@@ -7,6 +7,8 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import {AuthContext} from '../App';
 import {BackgroundImage} from '../images';
@@ -68,51 +70,53 @@ export default function SignInScreen({navigation}) {
 
   return (
     <View style={styles.container}>
-      <View>
-        <Image source={BackgroundImage} style={styles.backgroudImage} />
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <View>
+          <Image source={BackgroundImage} style={styles.backgroudImage} />
 
-        <View style={styles.foodInfo}>
-          <Text style={styles.helloText}>Welcome to</Text>
-          <Text style={styles.helloText}>EatSmart!</Text>
-          <View style={{marginTop: 50}}>
-            <TextInput
-              placeholder="Email"
-              placeholderTextColor="black"
-              style={styles.textInput}
-              onChangeText={setUsername}
-              value={username}
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
-            <TextInput
-              placeholder="Password"
-              placeholderTextColor="black"
-              secureTextEntry
-              style={styles.textInput}
-              onChangeText={setPassword}
-              value={password}
-            />
-          </View>
+          <View style={styles.foodInfo}>
+            <Text style={styles.helloText}>Welcome to</Text>
+            <Text style={styles.helloText}>EatSmart!</Text>
+            <View style={{marginTop: 50}}>
+              <TextInput
+                placeholder="Email"
+                placeholderTextColor="black"
+                style={styles.textInput}
+                onChangeText={setUsername}
+                value={username}
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+              <TextInput
+                placeholder="Password"
+                placeholderTextColor="black"
+                secureTextEntry
+                style={styles.textInput}
+                onChangeText={setPassword}
+                value={password}
+              />
+            </View>
 
-          <TouchableOpacity
-            onPress={() => signIn({username, password})}
-            style={styles.logInButton}>
-            <Text style={{fontSize: 15, textAlign: 'center'}}>Log In</Text>
-          </TouchableOpacity>
-          <View style={{flexDirection: 'row', marginTop: 20}}>
-            <Text>Forget Password?</Text>
             <TouchableOpacity
-              style={{marginHorizontal:40}}
-              onPress={() => {
-                navigation.navigate('Signup');
-              }}>
-              <Text style={{fontSize: 15, textAlign: 'center'}}>
-                Registration
-              </Text>
+              onPress={() => signIn({username, password})}
+              style={styles.logInButton}>
+              <Text style={{fontSize: 15, textAlign: 'center'}}>Log In</Text>
             </TouchableOpacity>
+            <View style={{flexDirection: 'row', marginTop: 20}}>
+              <Text>Forget Password?</Text>
+              <TouchableOpacity
+                style={{marginHorizontal: 40}}
+                onPress={() => {
+                  navigation.navigate('Signup');
+                }}>
+                <Text style={{fontSize: 15, textAlign: 'center'}}>
+                  Registration
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     </View>
   );
 }
