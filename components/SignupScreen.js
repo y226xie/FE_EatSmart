@@ -60,11 +60,17 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function SignInScreen({navigation}) {
+export default function SignupScreen() {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const [confirmPassword, setConfirmPassword] = React.useState('');
+  const [firstName, setFirstName] = React.useState('');
+  const [lastName, setLastName] = React.useState('');
+  const [height, setHeight] = React.useState('');
+  const [weight, setWeight] = React.useState('');
+  const [arePasswordsEqual, setArePasswordsEqual] = React.useState(true);
 
-  const {signIn} = React.useContext(AuthContext);
+  const {signUp} = React.useContext(AuthContext);
 
   return (
     <View style={styles.container}>
@@ -92,24 +98,64 @@ export default function SignInScreen({navigation}) {
               onChangeText={setPassword}
               value={password}
             />
+            <TextInput
+              placeholder="Confirm Password"
+              placeholderTextColor="black"
+              secureTextEntry
+              style={styles.textInput}
+              onChangeText={setConfirmPassword}
+              value={confirmPassword}
+            />
+            <TextInput
+              placeholder="First Name"
+              placeholderTextColor="black"
+              secureTextEntry
+              style={styles.textInput}
+              onChangeText={setFirstName}
+              value={firstName}
+            />
+            <TextInput
+              placeholder="Last Name"
+              placeholderTextColor="black"
+              secureTextEntry
+              style={styles.textInput}
+              onChangeText={setLastName}
+              value={lastName}
+            />
+            <TextInput
+              placeholder="Height"
+              placeholderTextColor="black"
+              secureTextEntry
+              style={styles.textInput}
+              onChangeText={setHeight}
+              value={height}
+            />
+            <TextInput
+              placeholder="Weight"
+              placeholderTextColor="black"
+              secureTextEntry
+              style={styles.textInput}
+              onChangeText={setWeight}
+              value={weight}
+            />
           </View>
-
+          {arePasswordsEqual ? 
           <TouchableOpacity
-            onPress={() => signIn({username, password})}
+            onPress={() => {
+                if (password != confirmPassword) {
+                    setArePasswordsEqual(false)
+                } else {
+                    signUp({username, password, firstName, lastName, height, weight})
+                }
+            }}
             style={styles.logInButton}>
-            <Text style={{fontSize: 15, textAlign: 'center'}}>Log In</Text>
-          </TouchableOpacity>
-          <View style={{flexDirection: 'row', marginTop: 20}}>
+            <Text style={{fontSize: 15, textAlign: 'center'}}>Sign Up</Text>
+          </TouchableOpacity> : <Text> Please ensure the passwords are matched</Text>
+          }
+          {/* <View style={{flexDirection: 'row', marginTop: 20}}>
             <Text>Forget Password?</Text>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate("Signup")
-              }}
-            >
-              <Text style={{fontSize: 15, textAlign: 'center'}}>Registration</Text>
-            </TouchableOpacity>
-            
-          </View>
+            <Text style={{marginLeft: 100}}> Registration</Text>
+          </View> */}
         </View>
       </View>
     </View>

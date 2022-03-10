@@ -5,6 +5,7 @@ import TabNavigator from './components/TabNavigator';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
 import {API_root} from '@env';
+import LoginScreen from './components/LoginScreen';
 
 const Stack = createNativeStackNavigator();
 export const AuthContext = React.createContext();
@@ -105,9 +106,35 @@ export default function App() {
         const logout = await Keychain.resetGenericPassword();
         dispatch({type: 'SIGN_OUT'});
       },
-      // signUp: async data => {
-      //   dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' });
-      // },
+      signUp: async data => {
+        try {
+          const response = await fetch(`${API_root}/auth/signup`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': `application/json`,
+              Accept: `application/json`,
+            },
+            body: JSON.stringify({
+              email: data.username,
+              password: data.password,
+              height: data.height,
+              weight: data.weight,
+              firstName: data.firstName,
+              lastName: data.lastName,
+            })
+          })
+          json = await response.json();
+          if (json.ok === false) {
+            console.log(json.message);
+          } else {
+            creds = json.data;
+            await Keychain.setGenericPassword(creds.email, creds.token);
+          }
+        } catch (error) {
+          console.log(error.message)
+        }
+        dispatch({ type: 'SIGN_IN', token: creds});
+      },
     }),
     [],
   );
@@ -118,8 +145,8 @@ export default function App() {
         <Stack.Navigator>
           {state.userToken == null ? (
             <Stack.Screen
-              name="SignIn"
-              component={SignInScreen}
+              name="Login"
+              component={LoginScreen}
               options={{headerShown: false}}
             />
           ) : (
