@@ -102,13 +102,14 @@ export default function SignInScreen({navigation}) {
           <View style={{flexDirection: 'row', marginTop: 20}}>
             <Text>Forget Password?</Text>
             <TouchableOpacity
+              style={{marginHorizontal:40}}
               onPress={() => {
-                navigation.navigate("Signup")
-              }}
-            >
-              <Text style={{fontSize: 15, textAlign: 'center'}}>Registration</Text>
+                navigation.navigate('Signup');
+              }}>
+              <Text style={{fontSize: 15, textAlign: 'center'}}>
+                Registration
+              </Text>
             </TouchableOpacity>
-            
           </View>
         </View>
       </View>

@@ -147,7 +147,7 @@ const radioButtonsData = [
 
 const allergyTypes = [
   {label: 'Eggs', value: 'eggs'},
-  {label: 'Fish', value: 'fish'},
+  {label: 'Seafood', value: 'seafood'},
   {label: 'Milk', value: 'milk'},
   {label: 'Peanuts', value: 'peanuts'},
   {label: 'Shellfish', value: 'shellfish'},
@@ -245,7 +245,7 @@ function ProfileScreen({navigation}) {
                 placeholder={'Pick the food the you allergy'}
                 customStyle={{
                   marginHorizontal: 10,
-                  zIndex:4000,
+                  zIndex: 4000,
                   width: screenWidth * 0.6,
                 }}
               />

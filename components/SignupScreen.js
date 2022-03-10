@@ -7,6 +7,8 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
+  ScrollView,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {AuthContext} from '../App';
 import {BackgroundImage} from '../images';
@@ -16,9 +18,9 @@ const screenHeight = Dimensions.get('screen').height;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'rgb(250, 250,250)',
-    alignItems: 'center',
-    paddingTop: 250,
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    backgroundColor: 'rgb(242, 243, 237)',
   },
   helloText: {
     fontSize: 30,
@@ -41,21 +43,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: screenWidth * 0.35,
     paddingVertical: 10,
-    marginTop: 20,
+    marginTop: 10,
   },
   backgroudImage: {
     width: screenWidth,
-    height: screenHeight * 0.3,
-    marginTop: -300,
+    height: 170,
   },
   foodInfo: {
     marginTop: 30,
     zIndex: 10,
     alignSelf: 'stretch',
-    height: 100,
     marginHorizontal: 30,
     alignItems: 'center',
-    backgroundColor: 'rgb(250, 250, 250)',
     borderRadius: 15,
   },
 });
@@ -73,91 +72,103 @@ export default function SignupScreen() {
   const {signUp} = React.useContext(AuthContext);
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
       <View>
-        <Image source={BackgroundImage} style={styles.backgroudImage} />
+        <ScrollView>
+          <Image source={BackgroundImage} style={styles.backgroudImage} />
 
-        <View style={styles.foodInfo}>
-          <Text style={styles.helloText}>Welcome to</Text>
-          <Text style={styles.helloText}>EatSmart!</Text>
-          <View style={{marginTop: 50}}>
-            <TextInput
-              placeholder="Email"
-              placeholderTextColor="black"
-              style={styles.textInput}
-              onChangeText={setUsername}
-              value={username}
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
-            <TextInput
-              placeholder="Password"
-              placeholderTextColor="black"
-              secureTextEntry
-              style={styles.textInput}
-              onChangeText={setPassword}
-              value={password}
-            />
-            <TextInput
-              placeholder="Confirm Password"
-              placeholderTextColor="black"
-              secureTextEntry
-              style={styles.textInput}
-              onChangeText={setConfirmPassword}
-              value={confirmPassword}
-            />
-            <TextInput
-              placeholder="First Name"
-              placeholderTextColor="black"
-              secureTextEntry
-              style={styles.textInput}
-              onChangeText={setFirstName}
-              value={firstName}
-            />
-            <TextInput
-              placeholder="Last Name"
-              placeholderTextColor="black"
-              secureTextEntry
-              style={styles.textInput}
-              onChangeText={setLastName}
-              value={lastName}
-            />
-            <TextInput
-              placeholder="Height"
-              placeholderTextColor="black"
-              secureTextEntry
-              style={styles.textInput}
-              onChangeText={setHeight}
-              value={height}
-            />
-            <TextInput
-              placeholder="Weight"
-              placeholderTextColor="black"
-              secureTextEntry
-              style={styles.textInput}
-              onChangeText={setWeight}
-              value={weight}
-            />
-          </View>
-          {arePasswordsEqual ? 
-          <TouchableOpacity
-            onPress={() => {
-                if (password != confirmPassword) {
-                    setArePasswordsEqual(false)
-                } else {
-                    signUp({username, password, firstName, lastName, height, weight})
-                }
-            }}
-            style={styles.logInButton}>
-            <Text style={{fontSize: 15, textAlign: 'center'}}>Sign Up</Text>
-          </TouchableOpacity> : <Text> Please ensure the passwords are matched</Text>
-          }
-          {/* <View style={{flexDirection: 'row', marginTop: 20}}>
+          <View style={styles.foodInfo}>
+            <Text style={styles.helloText}>Welcome to</Text>
+            <Text style={styles.helloText}>EatSmart!</Text>
+
+            <View style={{marginTop: 30}}>
+              <TextInput
+                placeholder="Email"
+                placeholderTextColor="black"
+                style={styles.textInput}
+                onChangeText={setUsername}
+                value={username}
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+              <TextInput
+                placeholder="Password"
+                placeholderTextColor="black"
+                secureTextEntry
+                style={styles.textInput}
+                onChangeText={setPassword}
+                value={password}
+              />
+              <TextInput
+                placeholder="Confirm Password"
+                placeholderTextColor="black"
+                secureTextEntry
+                style={styles.textInput}
+                onChangeText={setConfirmPassword}
+                value={confirmPassword}
+              />
+              <TextInput
+                placeholder="First Name"
+                placeholderTextColor="black"
+                style={styles.textInput}
+                onChangeText={setFirstName}
+                value={firstName}
+              />
+              <TextInput
+                placeholder="Last Name"
+                placeholderTextColor="black"
+                style={styles.textInput}
+                onChangeText={setLastName}
+                value={lastName}
+              />
+              <TextInput
+                placeholder="Height"
+                placeholderTextColor="black"
+                style={styles.textInput}
+                onChangeText={setHeight}
+                value={height}
+                keyboardType="numeric"
+              />
+              <TextInput
+                placeholder="Weight"
+                placeholderTextColor="black"
+                style={styles.textInput}
+                onChangeText={setWeight}
+                value={weight}
+                keyboardType="numeric"
+              />
+            </View>
+
+            {arePasswordsEqual ? (
+              <TouchableOpacity
+                style={{marginBottom: 20}}
+                onPress={() => {
+                  if (password != confirmPassword) {
+                    setArePasswordsEqual(false);
+                  } else {
+                    signUp({
+                      username,
+                      password,
+                      firstName,
+                      lastName,
+                      height,
+                      weight,
+                    });
+                  }
+                }}
+                style={styles.logInButton}>
+                <Text style={{fontSize: 15, textAlign: 'center'}}>Sign Up</Text>
+              </TouchableOpacity>
+            ) : (
+              <Text> Please ensure the passwords are matched</Text>
+            )}
+            {/* <View style={{flexDirection: 'row', marginTop: 20}}>
             <Text>Forget Password?</Text>
             <Text style={{marginLeft: 100}}> Registration</Text>
           </View> */}
-        </View>
+          </View>
+        </ScrollView>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }

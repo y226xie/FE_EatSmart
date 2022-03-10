@@ -153,10 +153,9 @@ export default function RecipeFilterView(props) {
           items={cuisines}
           value={selectedCuisines}
           setValue={setSelectedCuisines}
-          zIndex={4000}
           zIndexInverse={1000}
           placeholder={'Select a Cuisine'}
-          customStyle={{marginHorizontal: 15}}
+          customStyle={{marginHorizontal: 15, zIndex: 4000}}
           // setIsOpened={setIsOpened}
           // key={1}
         />
