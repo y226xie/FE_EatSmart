@@ -129,11 +129,19 @@ export function InventoryScreen({navigation}) {
       console.log(error.message);
     } finally {
       getIngredients();
+      setFoodName('');
+      setUnit('');
+      setQuantity('');
+      setDate(new Date());
       setIsModalOpen(false);
     }
   };
 
   const handleCancel = () => {
+    setFoodName('');
+    setUnit('');
+    setQuantity('');
+    setDate(new Date());
     setIsModalOpen(false);
   };
 
@@ -178,7 +186,7 @@ export function InventoryScreen({navigation}) {
                 <IngredientInformation
                   key={i}
                   ingredient={t}
-                  onChange={this.getIngredients}
+                  onChange={getIngredients}
                 />
               );
             })}

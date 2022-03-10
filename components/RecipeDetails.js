@@ -126,6 +126,10 @@ function RecipeDetails({route, navigation}) {
     },
   });
   const [nutrition, setNutrition] = useState({});
+  const [collected, setCollected] = useState(false);
+  const setColor = () => {
+    setCollected(!collected);
+  };
 
   const getIngredientAmount = async (userToken, ingredient) => {
     const response = await fetch(
@@ -344,8 +348,12 @@ function RecipeDetails({route, navigation}) {
           </View>
 
           <View style={{flexDirection: 'row', marginBottom: 20}}>
-            <TouchableOpacity style={styles.collect}>
-              <Ionicons name="heart-outline" size={30} color="black" />
+            <TouchableOpacity style={styles.collect} onPress={setColor}>
+              <Ionicons
+                name="heart"
+                size={30}
+                color={collected ? 'rgb(255, 207, 97)' : 'gray'}
+              />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() =>

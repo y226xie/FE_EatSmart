@@ -14,6 +14,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import StarRating from 'react-native-star-rating';
 import Steps from './Steps';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {DefaultStepImage} from '../images';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
@@ -170,7 +171,7 @@ function CookingSteps({route, navigation}) {
                 currentStep={index + 1}
                 key={index}
                 description={step.step}
-                uri={step.stepImage}
+                uri={DefaultStepImage}
               />
             </TouchableOpacity>
           );

@@ -94,10 +94,10 @@ function Main({navigation}) {
   };
 
   const [recommendation, setRecommendation] = useState({
-    firstName: "",
-    id: "",
-    title: "",
-    image: "",
+    firstName: '',
+    id: '',
+    title: '',
+    image: '',
   });
   const [ingredients, setIngredients] = useState({page: 0, items: []});
   const [totalPage, setTotalPage] = useState(0);
@@ -267,10 +267,7 @@ function Main({navigation}) {
                     })
                   }
                   foodName={recommendation.title}
-                  // difficulity="Medium"
                   foodImageUrl={recommendation.image}
-                  // foodName="Pasta"
-                  // foodImageUrl="https://picsum.photos/700"
                 />
               </View>
             </View>

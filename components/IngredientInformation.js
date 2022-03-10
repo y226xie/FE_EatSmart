@@ -16,6 +16,7 @@ import * as Keychain from 'react-native-keychain';
 import {Card} from 'react-native-paper';
 import {TextInput} from 'react-native-paper';
 import {API_root} from '@env';
+import AwesomeAlert from 'react-native-awesome-alerts';
 
 const screenHeight = Dimensions.get('screen').height;
 const screenWidth = Dimensions.get('screen').width;
@@ -109,17 +110,19 @@ const styles = StyleSheet.create({
 });
 
 export function IngredientInformation({onChange, ingredient}) {
-  const foodName = ingredient.name.toUpperCase();
-  const unit = ingredient.unit;
-  const category = ingredient.aisle;
-  const image = ingredient.image;
-
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [quantity, setQuantity] = React.useState(ingredient.amount);
   const [date, setDate] = useState(new Date(ingredient.best_before));
   const [open, setOpen] = useState(false);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const showAlert = () => setAlertVisible(true);
+
+  const hideAlert = () => {
+    setAlertVisible(false);
+  };
 
   const handleDelete = async () => {
+    setAlertVisible(false);
     try {
       const userToken = await Keychain.getGenericPassword();
       const response = await fetch(
@@ -138,6 +141,10 @@ export function IngredientInformation({onChange, ingredient}) {
     } catch (error) {
       console.log(error.message);
     }
+  };
+
+  const deleteConfirmDialog = () => {
+    showAlert();
   };
 
   const handleCancel = () => {
@@ -171,8 +178,27 @@ export function IngredientInformation({onChange, ingredient}) {
     setIsModalOpen(false);
   };
 
+  let foodName = ingredient.name.toUpperCase();
+  let unit = ingredient.unit;
+  let category = ingredient.aisle;
+  let image = ingredient.image;
+
   return (
     <View style={{width: screenWidth}}>
+      <AwesomeAlert
+        show={alertVisible}
+        showProgress={false}
+        title="Remove Ingredient"
+        message="Are you sure you want to delete this item"
+        closeOnTouchOutside={true}
+        closeOnHardwareBackPress={false}
+        showCancelButton={true}
+        showConfirmButton={true}
+        confirmText="Yes"
+        confirmButtonColor="#DD6B55"
+        onCancelPressed={hideAlert}
+        onConfirmPressed={handleDelete}
+      />
       <Modal
         animationType="slide"
         transparent={true}
@@ -237,12 +263,16 @@ export function IngredientInformation({onChange, ingredient}) {
             </View>
 
             <View style={{flexDirection: 'row', marginTop: 5}}>
-              <Pressable style={styles.buttonSubmit} onPress={handleSubmit}>
+              <TouchableOpacity
+                style={styles.buttonSubmit}
+                onPress={handleSubmit}>
                 <Text style={styles.textStyle}>Submit</Text>
-              </Pressable>
-              <Pressable style={styles.buttonCancel} onPress={handleCancel}>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.buttonCancel}
+                onPress={handleCancel}>
                 <Text style={styles.textStyle}>Cancel</Text>
-              </Pressable>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -254,12 +284,12 @@ export function IngredientInformation({onChange, ingredient}) {
           <TouchableOpacity
             style={{position: 'absolute', right: 40}}
             onPress={() => setIsModalOpen(true)}>
-            <Icon name={'pencil'} size={20} color="black" />
+            <Icon name={'pencil'} size={25} color="black" />
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={handleDelete}
+            onPress={deleteConfirmDialog}
             style={{position: 'absolute', right: 10}}>
-            <Icon name="remove" size={20} color="black" />
+            <Icon name="remove" size={25} color="black" />
           </TouchableOpacity>
           <View style={{flexShrink: 1, marginTop: 25}}>
             <Text

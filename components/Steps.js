@@ -31,7 +31,6 @@ const styles = StyleSheet.create({
 });
 
 function Steps({currentStep, uri, description}) {
-  const imageLink = uri ? uri : 'https://picsum.photos/700';
   return (
     <View
       style={{
@@ -42,7 +41,7 @@ function Steps({currentStep, uri, description}) {
       <Text style={styles.stepFont}>Step {currentStep}</Text>
       <Card style={styles.card}>
         <View style={{flexDirection: 'row'}}>
-          <Image source={{imageLink}} style={styles.image} />
+          <Image source={uri} style={styles.image} />
           <Text style={styles.description}>{description}</Text>
         </View>
       </Card>

@@ -21,22 +21,19 @@ function RecipeRecommendation({onPress, foodName, difficulity, foodImageUrl}) {
         style={{
           marginTop: 15,
           marginBottom: 10,
-          marginHorizontal: 90,
+          marginHorizontal: 80,
           fontSize: 14,
-          fontWeight: '500',
+          fontWeight: 'bold',
         }}>
         {foodName}
       </Text>
-      <View style={{marginHorizontal: 90}}>
+      <View style={{marginHorizontal: 100}}>
         <Image
           style={{
             width: screenWidth * 0.2,
             height: screenHeight * 0.1,
           }}
           source={{uri: foodImageUrl}}></Image>
-        <Text style={{marginTop: 10, marginLeft: -10, fontWeight: '500'}}>
-          Difficulity: Hard
-        </Text>
       </View>
     </Card>
   );
