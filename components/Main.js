@@ -93,7 +93,12 @@ function Main({navigation}) {
     setSearch(search);
   };
 
-  const [status, setStatus] = useState({recommendations: []});
+  const [recommendation, setRecommendation] = useState({
+    firstName: "",
+    id: "",
+    title: "",
+    image: "",
+  });
   const [ingredients, setIngredients] = useState({page: 0, items: []});
   const [totalPage, setTotalPage] = useState(0);
   const [visible, setVisible] = useState(false);
@@ -153,7 +158,7 @@ function Main({navigation}) {
     getIngredientsPageNumber(userToken);
     getIngredients(userToken, 0);
     try {
-      const response = await fetch(`${API_root}/meal/recipeByIngredient`, {
+      const response = await fetch(`${API_root}/meal/smartRecipe`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${userToken.password}`,
@@ -161,7 +166,7 @@ function Main({navigation}) {
       });
       const json = await response.json();
       console.log(json.message);
-      setStatus({recommendations: json.message});
+      setRecommendation(json.message);
     } catch (error) {
       console.log(error.message);
     } finally {
@@ -227,7 +232,7 @@ function Main({navigation}) {
                   <Icon name={'camera'} size={20} color="white" />
                 </TouchableOpacity>
               </View>
-              <Text style={styles.userName}>Fuhai!</Text>
+              <Text style={styles.userName}>{recommendation.firstName}</Text>
             </View>
 
             <View style={{marginHorizontal: 18}}>
@@ -258,12 +263,12 @@ function Main({navigation}) {
                   onPress={() =>
                     navigation.navigate({
                       name: 'RecipeDetails',
-                      params: {recipeID: status.recommendations[0].id},
+                      params: {recipeID: recommendation.id},
                     })
                   }
-                  foodName={status.recommendations[0].title}
+                  foodName={recommendation.title}
                   // difficulity="Medium"
-                  foodImageUrl={status.recommendations[0].image}
+                  foodImageUrl={recommendation.image}
                   // foodName="Pasta"
                   // foodImageUrl="https://picsum.photos/700"
                 />
