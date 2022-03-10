@@ -169,7 +169,7 @@ function Main({navigation}) {
                       style={{position: 'absolute', right: 20, top: 20}}>
                       <Icon name="remove" size={20} color="black" />
                     </TouchableOpacity>
-                    <PickImageScreen />
+                    <PickImageScreen closeImageScreen={hideModal}/>
                   </View>
                 </View>
               </Modal>

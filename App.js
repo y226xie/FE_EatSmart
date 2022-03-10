@@ -52,7 +52,7 @@ export default function App() {
           userToken = null;
         }
         if (userToken != null) {
-          response = await fetch(`${API_root}/auth/user`, {
+          response = await fetch(`${API_root}/information/user`, {
             method: 'GET',
             headers: {
               Authorization: `Bearer ${userToken.password}`,
@@ -117,12 +117,14 @@ export default function App() {
             body: JSON.stringify({
               email: data.username,
               password: data.password,
-              height: data.height,
-              weight: data.weight,
+              height: parseInt(data.height),
+              weight: parseInt(data.weight),
               firstName: data.firstName,
               lastName: data.lastName,
-            })
-          })
+              age: parseInt(data.age),
+              gender: data.gender,
+            }),
+          });
           json = await response.json();
           if (json.ok === false) {
             console.log(json.message);
@@ -131,9 +133,9 @@ export default function App() {
             await Keychain.setGenericPassword(creds.email, creds.token);
           }
         } catch (error) {
-          console.log(error.message)
+          console.log(error.message);
         }
-        dispatch({ type: 'SIGN_IN', token: creds});
+        dispatch({type: 'SIGN_IN', token: creds});
       },
     }),
     [],

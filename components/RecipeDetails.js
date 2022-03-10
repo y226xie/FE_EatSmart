@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'rgb(255, 231, 175)',
     borderRadius: 15,
-    marginLeft: 30,
+    marginLeft: screenWidth * 0.13,
     borderWidth: 1,
     paddingHorizontal: 65,
     shadowColor: 'rgba(0, 0, 0, 0.1)',
@@ -317,9 +317,9 @@ function RecipeDetails({route, navigation}) {
                   <DataTable.Title numeric>Amount</DataTable.Title>
                   <DataTable.Title numeric>Current</DataTable.Title>
                 </DataTable.Header>
-                {recipeData.information.ingredients.map(item => {
+                {recipeData.information.ingredients.map((item, index) => {
                   return (
-                    <View key={item.name}>
+                    <View key={index}>
                       <DataTable.Row>
                         <DataTable.Cell style={{flex: 2}}>
                           {item.name}

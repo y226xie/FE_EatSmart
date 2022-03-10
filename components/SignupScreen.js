@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import {AuthContext} from '../App';
 import {BackgroundImage} from '../images';
+import RadioGroup from 'react-native-radio-buttons-group';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
@@ -59,6 +60,19 @@ const styles = StyleSheet.create({
   },
 });
 
+const radioButtonsData = [
+  {
+    id: '1', // acts as primary key, should be unique and non-empty string
+    label: 'Male',
+    value: 'Male',
+  },
+  {
+    id: '2',
+    label: 'Female',
+    value: 'Female',
+  },
+];
+
 export default function SignupScreen() {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -67,10 +81,22 @@ export default function SignupScreen() {
   const [lastName, setLastName] = React.useState('');
   const [height, setHeight] = React.useState('');
   const [weight, setWeight] = React.useState('');
+  const [age, setAge] = React.useState('');
+  const [gender, setGender] = React.useState('');
+  const [radioButtons, setRadioButtons] = React.useState(radioButtonsData);
+
   const [arePasswordsEqual, setArePasswordsEqual] = React.useState(true);
 
   const {signUp} = React.useContext(AuthContext);
 
+  function onPressRadioButton(radioButtonsArray) {
+    setRadioButtons(radioButtonsArray);
+    if (!radioButtons[0].selected) {
+      setGender('Female');
+    } else {
+      setGender('Male');
+    }
+  }
   return (
     <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
       <View>
@@ -78,10 +104,40 @@ export default function SignupScreen() {
           <Image source={BackgroundImage} style={styles.backgroudImage} />
 
           <View style={styles.foodInfo}>
-            <Text style={styles.helloText}>Welcome to</Text>
-            <Text style={styles.helloText}>EatSmart!</Text>
+            <Text style={styles.helloText}>Registration</Text>
 
             <View style={{marginTop: 30}}>
+              <Text style={{marginBottom: 10}}>Personal Information: </Text>
+              <View>
+                <RadioGroup
+                  radioButtons={radioButtons}
+                  onPress={onPressRadioButton}
+                  layout={'row'}
+                />
+              </View>
+              <TextInput
+                placeholder="First Name"
+                placeholderTextColor="black"
+                style={styles.textInput}
+                onChangeText={setFirstName}
+                value={firstName}
+              />
+              <TextInput
+                placeholder="Last Name"
+                placeholderTextColor="black"
+                style={styles.textInput}
+                onChangeText={setLastName}
+                value={lastName}
+              />
+              <TextInput
+                placeholder="Age"
+                placeholderTextColor="black"
+                style={styles.textInput}
+                onChangeText={setAge}
+                value={age}
+                keyboardType="numeric"
+              />
+
               <TextInput
                 placeholder="Email"
                 placeholderTextColor="black"
@@ -100,27 +156,15 @@ export default function SignupScreen() {
                 value={password}
               />
               <TextInput
-                placeholder="Confirm Password"
+                placeholder="Re-enter Password"
                 placeholderTextColor="black"
                 secureTextEntry
                 style={styles.textInput}
                 onChangeText={setConfirmPassword}
                 value={confirmPassword}
               />
-              <TextInput
-                placeholder="First Name"
-                placeholderTextColor="black"
-                style={styles.textInput}
-                onChangeText={setFirstName}
-                value={firstName}
-              />
-              <TextInput
-                placeholder="Last Name"
-                placeholderTextColor="black"
-                style={styles.textInput}
-                onChangeText={setLastName}
-                value={lastName}
-              />
+
+              <Text style={{marginVertical: 10}}>Health Information: </Text>
               <TextInput
                 placeholder="Height"
                 placeholderTextColor="black"
@@ -153,6 +197,8 @@ export default function SignupScreen() {
                       lastName,
                       height,
                       weight,
+                      age,
+                      gender,
                     });
                   }
                 }}

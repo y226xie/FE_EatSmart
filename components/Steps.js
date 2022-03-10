@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
   description: {
     marginHorizontal: 10,
     flexShrink: 1,
-    marginTop: screenHeight * 0.03,
+    marginTop: screenHeight * 0.01,
   },
   stepFont: {
     marginRight: 20,
@@ -30,7 +30,8 @@ const styles = StyleSheet.create({
   },
 });
 
-function Steps({currentStep, uri = 'https://picsum.photos/700', description}) {
+function Steps({currentStep, uri, description}) {
+  const imageLink = uri ? uri : 'https://picsum.photos/700';
   return (
     <View
       style={{
@@ -41,7 +42,7 @@ function Steps({currentStep, uri = 'https://picsum.photos/700', description}) {
       <Text style={styles.stepFont}>Step {currentStep}</Text>
       <Card style={styles.card}>
         <View style={{flexDirection: 'row'}}>
-          <Image source={{uri}} style={styles.image} />
+          <Image source={{imageLink}} style={styles.image} />
           <Text style={styles.description}>{description}</Text>
         </View>
       </Card>

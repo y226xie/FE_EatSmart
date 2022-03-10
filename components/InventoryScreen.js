@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgb(255, 231, 175)',
     borderRadius: 15,
     marginHorizontal: 18,
+    width: screenWidth * 0.9,
     borderWidth: 1,
     shadowColor: 'rgba(0, 0, 0, 0.1)',
     shadowOpacity: 0.8,

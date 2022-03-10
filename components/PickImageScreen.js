@@ -82,8 +82,13 @@ export default class PickImageScreen extends Component {
       },
     })
       .then(response => response.json())
-      .then(data => console.log('response', data))
-      .catch(error => console.log('error', error));
+      .then(data => {
+        console.log('response', data);
+      })
+      .catch(error => {
+        console.log('error', error);
+      })
+      .finally(this.props.closeImageScreen());
   };
 
   openCamera = () => {
