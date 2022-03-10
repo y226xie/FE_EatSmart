@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -19,6 +19,9 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import RadioGroup from 'react-native-radio-buttons-group';
 import ProfileButton from '../utils/ProfileButtons';
 import DropDownFilterView from './DropdownFilterView';
+import * as Keychain from 'react-native-keychain';
+import {API_root} from '@env';
+
 
 const screenHeight = Dimensions.get('screen').height;
 const screenWidth = Dimensions.get('screen').width;
@@ -158,21 +161,71 @@ const allergyTypes = [
 
 function ProfileScreen({navigation}) {
   const [radioButtons, setRadioButtons] = useState(radioButtonsData);
-  const [height, setHeight] = useState(177);
-  const [weight, setWeight] = useState(55);
-  const [age, setAge] = useState(21);
+  const [height, setHeight] = useState(0);
+  const [weight, setWeight] = useState(0);
+  const [age, setAge] = useState(0);
   const [gender, setGender] = useState('Male');
   const [selectedAllergyTypes, setSelectedAllergyTypes] = useState([]);
+  const [userAllergy, setUserAllergy] = useState([])
+
+  const [userInfo, setUserInfo] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    height: 0,
+    weight: 0,
+    age: 0,
+    gender: "Male"
+  })
 
   //Formula for calcualte daily calories consumption
   const BMR =
     gender == 'Male'
-      ? 10 * weight + 6.25 * height - 5 * age + 5
-      : 10 * weight + 6.25 * height - 5 * age - 161;
+      ? 10 * userInfo.weight + 6.25 * userInfo.height - 5 * userInfo.age + 5
+      : 10 * userInfo.weight + 6.25 * userInfo.height - 5 * userInfo.age - 161;
 
   const {signOut} = React.useContext(AuthContext);
   const [visible, setVisible] = useState(false);
-  const showModal = () => setVisible(true);
+  const showModal = () => {
+    if (userInfo.gender === 'Male') {
+      setRadioButtons([
+        {
+          id: '1', // acts as primary key, should be unique and non-empty string
+          label: 'Male',
+          value: 'Male',
+          selected: true,
+        },
+        {
+          id: '2',
+          label: 'Female',
+          value: 'Female',
+        },
+      ])
+    } else {
+      setRadioButtons([
+        {
+          id: '1', // acts as primary key, should be unique and non-empty string
+          label: 'Male',
+          value: 'Male',
+        },
+        {
+          id: '2',
+          label: 'Female',
+          value: 'Female',
+          selected: true,
+        },
+      ])
+    }
+
+    setHeight(userInfo.height);
+    setWeight(userInfo.weight);
+    setAge(userInfo.age);
+    setGender(userInfo.gender);
+    setSelectedAllergyTypes(userAllergy);
+    
+    setVisible(true)
+  };
   const hideModal = () => setVisible(false);
   function onPressRadioButton(radioButtonsArray) {
     setRadioButtons(radioButtonsArray);
@@ -183,13 +236,93 @@ function ProfileScreen({navigation}) {
     }
   }
 
-  const handleSubmit = () => {
-    setVisible(false);
-    setGender(gender);
+  const handleSubmit = async() => {
+    try {
+      const userToken = await Keychain.getGenericPassword();
+      const put_body = JSON.stringify({
+        firstName: userInfo.firstName,
+        lastName: userInfo.lastName,
+        email: userInfo.email,
+        password: userInfo.password,
+        height: height,
+        weight: weight,
+        age: age,
+        gender: gender,
+      });
+      const response = await fetch(`${API_root}/information/user`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': `application/json`,
+          Accept: `application/json`,
+          Authorization: `Bearer ${userToken.password}`,
+        },
+        body: put_body
+      });
+      const json = await response.json();
+      
+      const allergiesResponse = await fetch(`${API_root}/information/allergy`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': `application/json`,
+          Accept: `application/json`,
+          Authorization: `Bearer ${userToken.password}`,
+        },
+        body: JSON.stringify(selectedAllergyTypes)
+      });
+      const allergiesJson = await allergiesResponse.json();
+      setUserAllergy(allergiesJson.message);
+      setUserInfo(json.message);
+
+    } catch (error) {
+      console.log(error.message)
+    } finally {
+      setVisible(false);
+    }
+
+    
+    // setGender(gender);
   };
   const handleCancel = () => {
     setVisible(false);
   };
+
+  const getUserInfo = async (userToken) => {
+    try {
+      const response = await fetch(`${API_root}/information/user`, {
+        headers: {
+          Authorization: `Bearer ${userToken.password}`,
+        },
+      });
+      const json = await response.json();
+      // console.log(json);
+      setUserInfo(json);
+      
+    } catch (error) {
+      console.log(error.message)
+    }
+  } 
+
+  const getUserAllergy = async (userToken) => {
+    try {
+      const response = await fetch(`${API_root}/information/allergy`, {
+        headers: {
+          Authorization: `Bearer ${userToken.password}`,
+        },
+      });
+      const json = await response.json();
+      setUserAllergy(json.message)
+      
+    } catch (error) {
+      console.log(error.message)
+    }
+  }
+
+  useEffect(() => {
+    Keychain.getGenericPassword().then(userToken => {
+      getUserInfo(userToken);
+      getUserAllergy(userToken);
+    })
+  }, [])
 
   return (
     <ScrollView style={styles.container}>
@@ -278,7 +411,7 @@ function ProfileScreen({navigation}) {
                 marginLeft: 5,
                 marginTop: 15,
               }}>
-              Fuhai
+              {userInfo.firstName}
             </Text>
 
             <TouchableOpacity style={styles.editBtn}>
@@ -314,22 +447,22 @@ function ProfileScreen({navigation}) {
           <Card style={{borderWidth: 1}}>
             <View style={styles.healthInfoRow}>
               <Text style={{marginLeft: 10}}>Gender</Text>
-              <Text style={{position: 'absolute', right: 10}}>{gender}</Text>
+              <Text style={{position: 'absolute', right: 10}}>{userInfo.gender}</Text>
             </View>
             <Seperator />
             <View style={styles.healthInfoRow}>
               <Text style={{marginLeft: 10}}>Height</Text>
-              <Text style={{position: 'absolute', right: 10}}>{height} cm</Text>
+              <Text style={{position: 'absolute', right: 10}}>{userInfo.height} cm</Text>
             </View>
             <Seperator />
             <View style={styles.healthInfoRow}>
               <Text style={{marginLeft: 10}}>Weight</Text>
-              <Text style={{position: 'absolute', right: 10}}>{weight} kg</Text>
+              <Text style={{position: 'absolute', right: 10}}>{userInfo.weight} kg</Text>
             </View>
             <Seperator />
             <View style={styles.healthInfoRow}>
               <Text style={{marginLeft: 10}}>Age</Text>
-              <Text style={{position: 'absolute', right: 10}}>{age}</Text>
+              <Text style={{position: 'absolute', right: 10}}>{userInfo.age}</Text>
             </View>
             <Seperator />
             <View style={styles.healthInfoRow}>
@@ -341,7 +474,7 @@ function ProfileScreen({navigation}) {
             <Seperator />
             <View style={styles.healthInfoRow}>
               <Text style={{marginLeft: 10}}>Allergy</Text>
-              <Text style={{position: 'absolute', right: 10}}>N/A</Text>
+              <Text style={{position: 'absolute', right: 10}}>{userAllergy.length === 0 ? ("N/A") : (userAllergy.join(","))}</Text>
             </View>
           </Card>
         </View>
