@@ -101,7 +101,7 @@ export function InventoryScreen({navigation}) {
   // const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [foodName, setFoodName] = useState('');
-  const [category, setCategory] = useState('');
+  const [unit, setUnit] = useState('');
   const [quantity, setQuantity] = useState('');
   const [date, setDate] = useState(new Date());
   const [open, setOpen] = useState(false);
@@ -110,26 +110,27 @@ export function InventoryScreen({navigation}) {
   const handleFormSubmit = async () => {
     try {
       const userToken = await Keychain.getGenericPassword();
-      put_body = JSON.stringify({
+      post_body = JSON.stringify({
+        name: foodName,
         best_before: date,
-        amount: quantity,
+        amount: parseInt(quantity),
+        unit: unit,
       });
-      const response = await fetch(
-        `${API_root}/storage/ingredient/${ingredient._id}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': `application/json`,
-            Accept: `application/json`,
-            Authorization: `Bearer ${userToken.password}`,
-          },
-          body: put_body,
+      const response = await fetch(`${API_root}/storage/ingredient`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': `application/json`,
+          Accept: `application/json`,
+          Authorization: `Bearer ${userToken.password}`,
         },
-      );
+        body: post_body,
+      });
     } catch (error) {
       console.log(error.message);
+    } finally {
+      getIngredients();
+      setIsModalOpen(false);
     }
-    setIsModalOpen(false);
   };
 
   const handleCancel = () => {
@@ -170,7 +171,7 @@ export function InventoryScreen({navigation}) {
           <RefreshControl refreshing={refreshing} onRefresh={getIngredients} />
         }>
         <Text style={styles.title}>Ingredient Information</Text>
-        {ingredients ? (
+        {ingredients && ingredients.length != 0 ? (
           <View>
             {ingredients.map((t, i) => {
               return (
@@ -206,9 +207,9 @@ export function InventoryScreen({navigation}) {
               />
               <TextInput
                 mode="outlined"
-                label="Category"
-                value={category}
-                onChangeText={setCategory}
+                label="Unit"
+                value={unit}
+                onChangeText={setUnit}
                 style={{width: screenWidth * 0.725, marginVertical: 5}}
               />
               <TextInput

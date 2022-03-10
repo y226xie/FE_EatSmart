@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useState} from 'react';
 import {
   ScrollView,
   View,
@@ -7,11 +7,13 @@ import {
   Text,
   TouchableOpacity,
   Dimensions,
+  Modal,
 } from 'react-native';
 import {RecipeDetailsImage} from '../images';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import StarRating from 'react-native-star-rating';
 import Steps from './Steps';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
@@ -63,20 +65,28 @@ const styles = StyleSheet.create({
     marginLeft: 30,
     marginBottom: 20,
   },
+  centerView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 20,
+  },
+  modalView: {
+    width: screenWidth * 0.83,
+    height: screenHeight * 0.3,
+    backgroundColor: 'white',
+    borderWidth: 1,
+    padding: 40,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
 });
-
-// const steps = [
-//   {description: 'Heat the oil in a skillet over medium heat'},
-//   {description: 'Add the garlic and 3 spring onions and cook for 2-3 mins'},
-//   {description: 'Add the garlic and 3 spring onions and cook for 2-3 mins'},
-//   {description: 'Add the garlic and 3 spring onions and cook for 2-3 mins'},
-//   {description: 'Add the carrots and other ingredients'},
-// ];
-// let cookingSteps = instructions.map((step, index) => {
-//   return (
-//     <Steps currentStep={index + 1} key={index} description={step.step} />
-//   );
-// });
 
 function CookingSteps({route, navigation}) {
   const instructions = route.params.instructions;
@@ -91,6 +101,14 @@ function CookingSteps({route, navigation}) {
   } else {
     difficulty = 'Hard';
   }
+
+  const [visible, setVisible] = useState(false);
+  const [modalText, setModalText] = useState('');
+  const showModal = stepDescription => {
+    setVisible(true);
+    setModalText(stepDescription);
+  };
+  const hideModal = () => setVisible(false);
 
   return (
     <View style={styles.container}>
@@ -124,13 +142,37 @@ function CookingSteps({route, navigation}) {
 
       <ScrollView>
         <Text style={styles.cookingStepsText}>Cooking Steps</Text>
+        <Modal animationType="slide" visible={visible} transparent={true}>
+          <View style={styles.centerView}>
+            <View style={styles.modalView}>
+              <TouchableOpacity
+                onPress={hideModal}
+                style={{position: 'absolute', right: 20, top: 20}}>
+                <Icon name="remove" size={20} color="black" />
+              </TouchableOpacity>
+              <ScrollView>
+                <Text
+                  style={{
+                    fontSize: 15,
+                    marginBottom: 10,
+                    marginHorizontal: 20,
+                  }}>
+                  {modalText}
+                </Text>
+              </ScrollView>
+            </View>
+          </View>
+        </Modal>
         {instructions.map((step, index) => {
           return (
-            <Steps
-              currentStep={index + 1}
-              key={index}
-              description={step.step}
-            />
+            <TouchableOpacity key={index} onPress={() => showModal(step.step)}>
+              <Steps
+                currentStep={index + 1}
+                key={index}
+                description={step.step}
+                uri={step.stepImage}
+              />
+            </TouchableOpacity>
           );
         })}
       </ScrollView>

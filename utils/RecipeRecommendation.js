@@ -21,13 +21,13 @@ function RecipeRecommendation({onPress, foodName, difficulity, foodImageUrl}) {
         style={{
           marginTop: 15,
           marginBottom: 10,
-          marginHorizontal: 50,
+          marginHorizontal: 90,
           fontSize: 14,
           fontWeight: '500',
         }}>
         {foodName}
       </Text>
-      <View style={{marginHorizontal: 50}}>
+      <View style={{marginHorizontal: 90}}>
         <Image
           style={{
             width: screenWidth * 0.2,

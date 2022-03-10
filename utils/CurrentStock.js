@@ -3,14 +3,10 @@ import {DataTable} from 'react-native-paper';
 
 const optionsPerPage = [2, 3, 4];
 
-function CurrentStock(props) {
+function CurrentStock({ingredients, totalPage, handlePageChange}) {
   const [itemsPerPage, setItemsPerPage] = React.useState(optionsPerPage[0]);
 
-  // React.useEffect(() => {
-  //   setPage(0);
-  // }, [itemsPerPage]);
-
-  let itemList = props.ingredients.items.map((item, index) => {
+  const mapIngredientToDataTable = ingredients.items.map((item, index) => {
     return (
       <DataTable.Row key={index}>
         <DataTable.Cell style={{flex: 4}}>{item.name}</DataTable.Cell>
@@ -21,7 +17,12 @@ function CurrentStock(props) {
     );
   });
 
-  const label = `${props.ingredients.page + 1} of ${props.totalPage}`;
+  let itemList =
+    ingredients && ingredients.items && ingredients.items.length >= 1
+      ? mapIngredientToDataTable
+      : null;
+
+  const label = `${ingredients.page + 1} of ${totalPage}`;
 
   return (
     <DataTable>
@@ -31,9 +32,9 @@ function CurrentStock(props) {
       </DataTable.Header>
       {itemList}
       <DataTable.Pagination
-        page={props.ingredients.page}
-        numberOfPages={props.totalPage}
-        onPageChange={page => props.handlePageChange(page)}
+        page={ingredients.page}
+        numberOfPages={totalPage}
+        onPageChange={page => handlePageChange(page)}
         label={label}
         optionsPerPage={optionsPerPage}
         itemsPerPage={itemsPerPage}
