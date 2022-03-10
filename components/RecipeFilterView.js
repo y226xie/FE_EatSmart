@@ -156,6 +156,7 @@ export default function RecipeFilterView(props) {
           zIndex={4000}
           zIndexInverse={1000}
           placeholder={'Select a Cuisine'}
+          customStyle={{marginHorizontal: 15}}
           // setIsOpened={setIsOpened}
           // key={1}
         />
@@ -164,9 +165,9 @@ export default function RecipeFilterView(props) {
           items={diets}
           value={selectedDiets}
           setValue={setSelectedDiets}
-          zIndex={3000}
           zIndexInverse={2000}
           placeholder={'Select a Diet'}
+          customStyle={{marginHorizontal: 15, zIndex: 3000}}
           // setIsOpened={setIsOpened}
           // key={2}
         />
@@ -175,9 +176,9 @@ export default function RecipeFilterView(props) {
           items={intolerances}
           value={selectedIntolerances}
           setValue={setSelectedIntolerances}
-          zIndex={2000}
           zIndexInverse={3000}
           placeholder={'Select an Intolerance'}
+          customStyle={{marginHorizontal: 15, zIndex: 2000}}
           // setIsOpened={setIsOpened}
           // key={3}
         />
@@ -186,9 +187,9 @@ export default function RecipeFilterView(props) {
           items={mealTypes}
           value={selectedMealTypes}
           setValue={setSelectedMealTypes}
-          zIndex={1000}
           zIndexInverse={4000}
           placeholder={'Select a Meal Type'}
+          customStyle={{marginHorizontal: 15, zIndex: 1000}}
           // setIsOpened={setIsOpened}
           // key={4}
         />

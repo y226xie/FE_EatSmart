@@ -6,16 +6,18 @@ import SignupScreen from './SignupScreen';
 const Stack = createNativeStackNavigator();
 
 export default function LoginScreen({navigation}) {
-    return (
-        <Stack.Navigator>
-            <Stack.Screen
-                name="SignIn"
-                component={SignInScreen}
-            />
-            <Stack.Screen
-                name="Signup"
-                component={SignupScreen}
-            />
-        </Stack.Navigator>
-    )
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="SignIn"
+        component={SignInScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Signup"
+        component={SignupScreen}
+        options={{headerShown: false}}
+      />
+    </Stack.Navigator>
+  );
 }

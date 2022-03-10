@@ -87,21 +87,22 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   modalView: {
-    width: screenWidth * 0.83,
-    height: screenHeight * 0.6,
+    width: screenWidth * 0.9,
+    height: screenHeight * 0.7,
     backgroundColor: 'white',
-    borderRadius: 20,
     padding: 50,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
     },
+    borderWidth: 1,
   },
   buttonSubmit: {
     borderRadius: 5,
     padding: 10,
-    width: screenWidth * 0.2,
+    marginLeft: 10,
+    width: screenWidth * 0.25,
     backgroundColor: '#FDE7B6',
     borderWidth: 1,
     marginRight: 40,
@@ -109,7 +110,7 @@ const styles = StyleSheet.create({
   buttonCancel: {
     borderRadius: 5,
     padding: 10,
-    width: screenWidth * 0.2,
+    width: screenWidth * 0.25,
     backgroundColor: 'gray',
     borderWidth: 1,
   },
@@ -122,6 +123,12 @@ const styles = StyleSheet.create({
     marginTop: 7,
     marginLeft: 10,
     fontSize: 14,
+  },
+  modalField: {
+    width: screenWidth * 0.6,
+    height: screenHeight * 0.05,
+    marginVertical: 5,
+    marginHorizontal: 10,
   },
 });
 
@@ -138,14 +145,16 @@ const radioButtonsData = [
   },
 ];
 
-// const cuisines = [
-//   {label: 'African', value: 'african'},
-//   {label: 'American', value: 'american'},
-//   {label: 'British', value: 'british'},
-//   {label: 'Caribbean', value: 'caribbean'},
-//   {label: 'Chinese', value: 'chinese'},
-//   {label: 'European', value: 'european'},
-// ];
+const allergyTypes = [
+  {label: 'Eggs', value: 'eggs'},
+  {label: 'Fish', value: 'fish'},
+  {label: 'Milk', value: 'milk'},
+  {label: 'Peanuts', value: 'peanuts'},
+  {label: 'Shellfish', value: 'shellfish'},
+  {label: 'Soy', value: 'soy'},
+  {label: 'Wheat', value: 'wheat'},
+  {label: 'N/A', value: 'none'},
+];
 
 function ProfileScreen({navigation}) {
   const [radioButtons, setRadioButtons] = useState(radioButtonsData);
@@ -153,7 +162,7 @@ function ProfileScreen({navigation}) {
   const [weight, setWeight] = useState(55);
   const [age, setAge] = useState(21);
   const [gender, setGender] = useState('Male');
-  const [selectedCuisines, setSelectedCuisines] = useState([]);
+  const [selectedAllergyTypes, setSelectedAllergyTypes] = useState([]);
 
   //Formula for calcualte daily calories consumption
   const BMR =
@@ -174,7 +183,10 @@ function ProfileScreen({navigation}) {
     }
   }
 
-  const handleSubmit = () => {};
+  const handleSubmit = () => {
+    setVisible(false);
+    setGender(gender);
+  };
   const handleCancel = () => {
     setVisible(false);
   };
@@ -207,12 +219,7 @@ function ProfileScreen({navigation}) {
                 value={height + ''}
                 keyboardType="numeric"
                 onChangeText={setHeight}
-                style={{
-                  width: screenWidth * 0.5,
-                  height: screenHeight * 0.05,
-                  marginVertical: 5,
-                  marginHorizontal: 20,
-                }}
+                style={styles.modalField}
               />
               <TextInput
                 mode="outlined"
@@ -220,12 +227,7 @@ function ProfileScreen({navigation}) {
                 value={weight + ''}
                 keyboardType="numeric"
                 onChangeText={setWeight}
-                style={{
-                  width: screenWidth * 0.5,
-                  height: screenHeight * 0.05,
-                  marginVertical: 5,
-                  marginHorizontal: 20,
-                }}
+                style={styles.modalField}
               />
               <TextInput
                 mode="outlined"
@@ -233,21 +235,20 @@ function ProfileScreen({navigation}) {
                 value={age + ''}
                 keyboardType="numeric"
                 onChangeText={setAge}
-                style={{
-                  width: screenWidth * 0.5,
-                  height: screenHeight * 0.05,
-                  marginVertical: 5,
-                  marginHorizontal: 20,
+                style={styles.modalField}
+              />
+              <DropDownFilterView
+                items={allergyTypes}
+                value={selectedAllergyTypes}
+                setValue={setSelectedAllergyTypes}
+                zIndexInverse={1000}
+                placeholder={'Pick the food the you allergy'}
+                customStyle={{
+                  marginHorizontal: 10,
+                  zIndex:4000,
+                  width: screenWidth * 0.6,
                 }}
               />
-              {/* <DropDownFilterView
-                items={cuisines}
-                value={selectedCuisines}
-                setValue={setSelectedCuisines}
-                zIndex={4000}
-                zIndexInverse={1000}
-                placeholder={'Pick your Allergy'}
-              /> */}
               <View style={{flexDirection: 'row', marginTop: 5}}>
                 <Pressable style={styles.buttonSubmit} onPress={handleSubmit}>
                   <Text style={styles.textStyle}>Submit</Text>
@@ -318,17 +319,17 @@ function ProfileScreen({navigation}) {
             <Seperator />
             <View style={styles.healthInfoRow}>
               <Text style={{marginLeft: 10}}>Height</Text>
-              <Text style={{position: 'absolute', right: 10}}>177cm</Text>
+              <Text style={{position: 'absolute', right: 10}}>{height} cm</Text>
             </View>
             <Seperator />
             <View style={styles.healthInfoRow}>
               <Text style={{marginLeft: 10}}>Weight</Text>
-              <Text style={{position: 'absolute', right: 10}}>55kg</Text>
+              <Text style={{position: 'absolute', right: 10}}>{weight} kg</Text>
             </View>
             <Seperator />
             <View style={styles.healthInfoRow}>
               <Text style={{marginLeft: 10}}>Age</Text>
-              <Text style={{position: 'absolute', right: 10}}>21</Text>
+              <Text style={{position: 'absolute', right: 10}}>{age}</Text>
             </View>
             <Seperator />
             <View style={styles.healthInfoRow}>

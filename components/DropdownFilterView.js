@@ -1,19 +1,22 @@
 import React, {useEffect, useState} from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
-import {View} from 'react-native';
+import {View, Dimensions} from 'react-native';
+
+const screenWidth = Dimensions.get('screen').width;
+const screenHeight = Dimensions.get('screen').height;
 
 export default function DropDownFilterView({
   items,
   value,
   setValue,
-  zIndex,
   zIndexInverse,
   placeholder,
+  customStyle,
 }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <View style={{marginHorizontal: 15, zIndex: zIndex}}>
+    <View style={customStyle}>
       <DropDownPicker
         style={{marginVertical: 10}}
         placeholderStyle={{fontWeight: '500'}}
@@ -32,7 +35,7 @@ export default function DropDownFilterView({
         setOpen={setOpen}
         setValue={setValue}
         // setItems={setItems}
-        zIndex={zIndex}
+        //zIndex={zIndex}
         zIndexInverse={zIndexInverse}
         placeholder={placeholder}
       />
