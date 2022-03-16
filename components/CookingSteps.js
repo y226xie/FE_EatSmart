@@ -110,7 +110,6 @@ function CookingSteps({route, navigation}) {
     setModalText(stepDescription);
   };
   const hideModal = () => setVisible(false);
-
   return (
     <View style={styles.container}>
       <View>
@@ -142,40 +141,59 @@ function CookingSteps({route, navigation}) {
       </View>
 
       <ScrollView>
-        <Text style={styles.cookingStepsText}>Cooking Steps</Text>
-        <Modal animationType="slide" visible={visible} transparent={true}>
-          <View style={styles.centerView}>
-            <View style={styles.modalView}>
-              <TouchableOpacity
-                onPress={hideModal}
-                style={{position: 'absolute', right: 20, top: 20}}>
-                <Icon name="remove" size={20} color="black" />
-              </TouchableOpacity>
-              <ScrollView>
-                <Text
-                  style={{
-                    fontSize: 15,
-                    marginBottom: 10,
-                    marginHorizontal: 20,
-                  }}>
-                  {modalText}
-                </Text>
-              </ScrollView>
-            </View>
+        {instructions && instructions.length > 0 ? (
+          <View>
+            <Text style={styles.cookingStepsText}>Cooking Steps</Text>
+            <Modal animationType="slide" visible={visible} transparent={true}>
+              <View style={styles.centerView}>
+                <View style={styles.modalView}>
+                  <TouchableOpacity
+                    onPress={hideModal}
+                    style={{position: 'absolute', right: 20, top: 20}}>
+                    <Icon name="remove" size={20} color="black" />
+                  </TouchableOpacity>
+                  <ScrollView>
+                    <Text
+                      style={{
+                        fontSize: 15,
+                        marginBottom: 10,
+                        marginHorizontal: 20,
+                      }}>
+                      {modalText}
+                    </Text>
+                  </ScrollView>
+                </View>
+              </View>
+            </Modal>
+            {instructions.map((step, index) => {
+              return (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => showModal(step.step)}>
+                  <Steps
+                    currentStep={index + 1}
+                    key={index}
+                    description={step.step}
+                    uri={DefaultStepImage}
+                  />
+                </TouchableOpacity>
+              );
+            })}
           </View>
-        </Modal>
-        {instructions.map((step, index) => {
-          return (
-            <TouchableOpacity key={index} onPress={() => showModal(step.step)}>
-              <Steps
-                currentStep={index + 1}
-                key={index}
-                description={step.step}
-                uri={DefaultStepImage}
-              />
-            </TouchableOpacity>
-          );
-        })}
+        ) : (
+          <View>
+            <Text
+              style={{
+                fontWeight: '500',
+                marginHorizontal: 40,
+                marginTop: 100,
+                fontSize: 20,
+              }}>
+              Oops! Looks like there is no cooking steps found! Please try
+              another recipe.
+            </Text>
+          </View>
+        )}
       </ScrollView>
     </View>
   );

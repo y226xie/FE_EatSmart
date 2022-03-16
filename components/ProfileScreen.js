@@ -22,7 +22,6 @@ import DropDownFilterView from './DropdownFilterView';
 import * as Keychain from 'react-native-keychain';
 import {API_root} from '@env';
 
-
 const screenHeight = Dimensions.get('screen').height;
 const screenWidth = Dimensions.get('screen').width;
 
@@ -159,6 +158,17 @@ const allergyTypes = [
   {label: 'N/A', value: 'none'},
 ];
 
+const restrictions = [
+  {label: 'Diary', value: 'diary'},
+  {label: 'Gluten', value: 'gluten'},
+  {label: 'Vegetarian', value: 'vegetarian'},
+  {label: 'Low Sugar', value: 'lowSugar'},
+  {label: 'Vegan', value: 'vegan'},
+  {label: 'Paleo', value: 'paleo'},
+  {label: 'Pescatarian', value: 'pescatarian'},
+  {label: 'N/A', value: 'none'},
+];
+
 function ProfileScreen({navigation}) {
   const [radioButtons, setRadioButtons] = useState(radioButtonsData);
   const [height, setHeight] = useState(0);
@@ -166,18 +176,20 @@ function ProfileScreen({navigation}) {
   const [age, setAge] = useState(0);
   const [gender, setGender] = useState('Male');
   const [selectedAllergyTypes, setSelectedAllergyTypes] = useState([]);
-  const [userAllergy, setUserAllergy] = useState([])
+  const [userAllergy, setUserAllergy] = useState([]);
+  const [restriction, setRestriction] = useState([]);
+  const [selectedRestriction, setSelectedRestriction] = useState([]);
 
   const [userInfo, setUserInfo] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
     height: 0,
     weight: 0,
     age: 0,
-    gender: "Male"
-  })
+    gender: 'Male',
+  });
 
   //Formula for calcualte daily calories consumption
   const BMR =
@@ -201,7 +213,7 @@ function ProfileScreen({navigation}) {
           label: 'Female',
           value: 'Female',
         },
-      ])
+      ]);
     } else {
       setRadioButtons([
         {
@@ -215,7 +227,7 @@ function ProfileScreen({navigation}) {
           value: 'Female',
           selected: true,
         },
-      ])
+      ]);
     }
 
     setHeight(userInfo.height);
@@ -223,8 +235,9 @@ function ProfileScreen({navigation}) {
     setAge(userInfo.age);
     setGender(userInfo.gender);
     setSelectedAllergyTypes(userAllergy);
-    
-    setVisible(true)
+    setSelectedRestriction(restriction);
+
+    setVisible(true);
   };
   const hideModal = () => setVisible(false);
   function onPressRadioButton(radioButtonsArray) {
@@ -236,7 +249,7 @@ function ProfileScreen({navigation}) {
     }
   }
 
-  const handleSubmit = async() => {
+  const handleSubmit = async () => {
     try {
       const userToken = await Keychain.getGenericPassword();
       const put_body = JSON.stringify({
@@ -256,10 +269,10 @@ function ProfileScreen({navigation}) {
           Accept: `application/json`,
           Authorization: `Bearer ${userToken.password}`,
         },
-        body: put_body
+        body: put_body,
       });
       const json = await response.json();
-      
+
       const allergiesResponse = await fetch(`${API_root}/information/allergy`, {
         method: 'PUT',
         headers: {
@@ -267,26 +280,23 @@ function ProfileScreen({navigation}) {
           Accept: `application/json`,
           Authorization: `Bearer ${userToken.password}`,
         },
-        body: JSON.stringify(selectedAllergyTypes)
+        body: JSON.stringify(selectedAllergyTypes),
       });
       const allergiesJson = await allergiesResponse.json();
       setUserAllergy(allergiesJson.message);
       setUserInfo(json.message);
-
     } catch (error) {
-      console.log(error.message)
+      console.log(error.message);
     } finally {
+      setRestriction(selectedRestriction);
       setVisible(false);
     }
-
-    
-    // setGender(gender);
   };
   const handleCancel = () => {
     setVisible(false);
   };
 
-  const getUserInfo = async (userToken) => {
+  const getUserInfo = async userToken => {
     try {
       const response = await fetch(`${API_root}/information/user`, {
         headers: {
@@ -296,13 +306,12 @@ function ProfileScreen({navigation}) {
       const json = await response.json();
       // console.log(json);
       setUserInfo(json);
-      
     } catch (error) {
-      console.log(error.message)
+      console.log(error.message);
     }
-  } 
+  };
 
-  const getUserAllergy = async (userToken) => {
+  const getUserAllergy = async userToken => {
     try {
       const response = await fetch(`${API_root}/information/allergy`, {
         headers: {
@@ -310,19 +319,18 @@ function ProfileScreen({navigation}) {
         },
       });
       const json = await response.json();
-      setUserAllergy(json.message)
-      
+      setUserAllergy(json.message);
     } catch (error) {
-      console.log(error.message)
+      console.log(error.message);
     }
-  }
+  };
 
   useEffect(() => {
     Keychain.getGenericPassword().then(userToken => {
       getUserInfo(userToken);
       getUserAllergy(userToken);
-    })
-  }, [])
+    });
+  }, []);
 
   return (
     <ScrollView style={styles.container}>
@@ -375,7 +383,19 @@ function ProfileScreen({navigation}) {
                 value={selectedAllergyTypes}
                 setValue={setSelectedAllergyTypes}
                 zIndexInverse={1000}
-                placeholder={'Pick the food the you allergy'}
+                placeholder={'Pick your allergies'}
+                customStyle={{
+                  marginHorizontal: 10,
+                  zIndex: 5000,
+                  width: screenWidth * 0.6,
+                }}
+              />
+              <DropDownFilterView
+                items={restrictions}
+                value={selectedRestriction}
+                setValue={setSelectedRestriction}
+                zIndexInverse={1000}
+                placeholder={'Pick your dietary restriction'}
                 customStyle={{
                   marginHorizontal: 10,
                   zIndex: 4000,
@@ -447,22 +467,30 @@ function ProfileScreen({navigation}) {
           <Card style={{borderWidth: 1}}>
             <View style={styles.healthInfoRow}>
               <Text style={{marginLeft: 10}}>Gender</Text>
-              <Text style={{position: 'absolute', right: 10}}>{userInfo.gender}</Text>
+              <Text style={{position: 'absolute', right: 10}}>
+                {userInfo.gender}
+              </Text>
             </View>
             <Seperator />
             <View style={styles.healthInfoRow}>
               <Text style={{marginLeft: 10}}>Height</Text>
-              <Text style={{position: 'absolute', right: 10}}>{userInfo.height} cm</Text>
+              <Text style={{position: 'absolute', right: 10}}>
+                {userInfo.height} cm
+              </Text>
             </View>
             <Seperator />
             <View style={styles.healthInfoRow}>
               <Text style={{marginLeft: 10}}>Weight</Text>
-              <Text style={{position: 'absolute', right: 10}}>{userInfo.weight} kg</Text>
+              <Text style={{position: 'absolute', right: 10}}>
+                {userInfo.weight} kg
+              </Text>
             </View>
             <Seperator />
             <View style={styles.healthInfoRow}>
               <Text style={{marginLeft: 10}}>Age</Text>
-              <Text style={{position: 'absolute', right: 10}}>{userInfo.age}</Text>
+              <Text style={{position: 'absolute', right: 10}}>
+                {userInfo.age}
+              </Text>
             </View>
             <Seperator />
             <View style={styles.healthInfoRow}>
@@ -474,7 +502,16 @@ function ProfileScreen({navigation}) {
             <Seperator />
             <View style={styles.healthInfoRow}>
               <Text style={{marginLeft: 10}}>Allergy</Text>
-              <Text style={{position: 'absolute', right: 10}}>{userAllergy.length === 0 ? ("N/A") : (userAllergy.join(","))}</Text>
+              <Text style={{position: 'absolute', right: 10}}>
+                {userAllergy.length === 0 ? 'N/A' : userAllergy.join(',')}
+              </Text>
+            </View>
+            <Seperator />
+            <View style={styles.healthInfoRow}>
+              <Text style={{marginLeft: 10}}>Dietary Restrictions</Text>
+              <Text style={{position: 'absolute', right: 10}}>
+                {restriction.length === 0 ? 'N/A' : restriction.join(',')}
+              </Text>
             </View>
           </Card>
         </View>

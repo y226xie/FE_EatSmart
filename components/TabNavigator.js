@@ -2,6 +2,7 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import HomeScreen from './HomeScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ProfileScreen from './ProfileScreen';
 import MenuScreen from './MenuScreen';
 import {InventoryScreen} from './InventoryScreen';
@@ -22,7 +23,13 @@ function TabNavigator() {
           } else if (route.name === 'Profile') {
             iconName = 'settings';
           } else if (route.name === 'Recipe') {
-            iconName = 'heart';
+            return (
+              <MaterialCommunityIcons
+                name="silverware-fork-knife"
+                size={size}
+                color={color}
+              />
+            );
           } else if (route.name === 'Inventory') {
             iconName = 'menu';
           } else if (route.name === 'Camera') {
