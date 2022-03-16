@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     width: screenWidth * 0.9,
-    height: screenHeight * 0.7,
+    height: screenHeight * 0.9,
     backgroundColor: 'white',
     padding: 50,
     shadowColor: '#000',
@@ -169,6 +169,14 @@ const restrictions = [
   {label: 'N/A', value: 'none'},
 ];
 
+const levels = [
+  {label: 'little or no exercise', value: 'little or no exercise'},
+  {label: 'sports 1-3 days/week', value: 'sports 1-3 days/week'},
+  {label: 'sports 3-5 days/week', value: 'sports 3-5 days/week'},
+  {label: 'sports 6-7 days/week', value: 'sports 6-7 days/week'},
+  {label: 'more than 6-7 days/week', value: 'more than 6-7 days/week'},
+];
+
 function ProfileScreen({navigation}) {
   const [radioButtons, setRadioButtons] = useState(radioButtonsData);
   const [height, setHeight] = useState(0);
@@ -179,6 +187,8 @@ function ProfileScreen({navigation}) {
   const [userAllergy, setUserAllergy] = useState([]);
   const [restriction, setRestriction] = useState([]);
   const [selectedRestriction, setSelectedRestriction] = useState([]);
+  const [exerciseLevel, setExerciseLevel] = useState('little or no exercise');
+  const [selectedLevel, setSelectedLevel] = useState([]);
 
   const [userInfo, setUserInfo] = useState({
     firstName: '',
@@ -191,11 +201,35 @@ function ProfileScreen({navigation}) {
     gender: 'Male',
   });
 
+  let exerciseFactor;
+  if (exerciseLevel == 'little or no exercise') {
+    exerciseFactor = 1.2;
+  } else if (exerciseLevel == 'sports 1-3 days/week') {
+    exerciseFactor = 1.375;
+  } else if (exerciseLevel == 'sports 3-5 days/week') {
+    exerciseFactor = 1.55;
+  } else if (exerciseLevel == 'sports 6-7 days/week') {
+    exerciseFactor = 1.725;
+  } else {
+    exerciseFactor = 1.9;
+  }
   //Formula for calcualte daily calories consumption
   const BMR =
     gender == 'Male'
-      ? 10 * userInfo.weight + 6.25 * userInfo.height - 5 * userInfo.age + 5
-      : 10 * userInfo.weight + 6.25 * userInfo.height - 5 * userInfo.age - 161;
+      ? (
+          (88.362 +
+            13.397 * userInfo.weight +
+            4.799 * userInfo.height -
+            5.677 * userInfo.age) *
+          exerciseFactor
+        ).toFixed(2)
+      : (
+          (447.593 +
+            9.247 * userInfo.weight +
+            3.098 * userInfo.height -
+            4.33 * userInfo.age) *
+          exerciseFactor
+        ).toFixed(2);
 
   const {signOut} = React.useContext(AuthContext);
   const [visible, setVisible] = useState(false);
@@ -236,6 +270,7 @@ function ProfileScreen({navigation}) {
     setGender(userInfo.gender);
     setSelectedAllergyTypes(userAllergy);
     setSelectedRestriction(restriction);
+    setExerciseLevel(exerciseLevel);
 
     setVisible(true);
   };
@@ -289,6 +324,7 @@ function ProfileScreen({navigation}) {
       console.log(error.message);
     } finally {
       setRestriction(selectedRestriction);
+      setExerciseLevel(selectedLevel);
       setVisible(false);
     }
   };
@@ -383,6 +419,7 @@ function ProfileScreen({navigation}) {
                 value={selectedAllergyTypes}
                 setValue={setSelectedAllergyTypes}
                 zIndexInverse={1000}
+                multiple={true}
                 placeholder={'Pick your allergies'}
                 customStyle={{
                   marginHorizontal: 10,
@@ -395,10 +432,24 @@ function ProfileScreen({navigation}) {
                 value={selectedRestriction}
                 setValue={setSelectedRestriction}
                 zIndexInverse={1000}
+                multiple={true}
                 placeholder={'Pick your dietary restriction'}
                 customStyle={{
                   marginHorizontal: 10,
                   zIndex: 4000,
+                  width: screenWidth * 0.6,
+                }}
+              />
+              <DropDownFilterView
+                items={levels}
+                value={selectedLevel}
+                setValue={setSelectedLevel}
+                zIndexInverse={1000}
+                multiple={false}
+                placeholder={'Pick your daily exercise level'}
+                customStyle={{
+                  marginHorizontal: 10,
+                  zIndex: 3000,
                   width: screenWidth * 0.6,
                 }}
               />
@@ -449,7 +500,7 @@ function ProfileScreen({navigation}) {
         />
 
         <View
-          style={{marginVertical: 20, marginHorizontal: screenWidth * 0.02}}>
+          style={{marginVertical: 10, marginHorizontal: screenWidth * 0.02}}>
           <View style={{flexDirection: 'row'}}>
             <Text style={{marginBottom: 10, fontWeight: '500', fontSize: 14}}>
               Health Info
@@ -494,13 +545,6 @@ function ProfileScreen({navigation}) {
             </View>
             <Seperator />
             <View style={styles.healthInfoRow}>
-              <Text style={{marginLeft: 10}}>Basal Metabolic Rate</Text>
-              <Text style={{position: 'absolute', right: 10}}>
-                {BMR} Calories/Day
-              </Text>
-            </View>
-            <Seperator />
-            <View style={styles.healthInfoRow}>
               <Text style={{marginLeft: 10}}>Allergy</Text>
               <Text style={{position: 'absolute', right: 10}}>
                 {userAllergy.length === 0 ? 'N/A' : userAllergy.join(',')}
@@ -511,6 +555,20 @@ function ProfileScreen({navigation}) {
               <Text style={{marginLeft: 10}}>Dietary Restrictions</Text>
               <Text style={{position: 'absolute', right: 10}}>
                 {restriction.length === 0 ? 'N/A' : restriction.join(',')}
+              </Text>
+            </View>
+            <Seperator />
+            <View style={styles.healthInfoRow}>
+              <Text style={{marginLeft: 10}}>Daily Exercise Level</Text>
+              <Text style={{position: 'absolute', right: 10}}>
+                {exerciseLevel}
+              </Text>
+            </View>
+            <Seperator />
+            <View style={styles.healthInfoRow}>
+              <Text style={{marginLeft: 10}}>Daily Calories Requirement</Text>
+              <Text style={{position: 'absolute', right: 10}}>
+                {BMR} Calories/Day
               </Text>
             </View>
           </Card>

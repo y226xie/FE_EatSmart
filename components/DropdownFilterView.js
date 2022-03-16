@@ -12,6 +12,7 @@ export default function DropDownFilterView({
   zIndexInverse,
   placeholder,
   customStyle,
+  multiple,
 }) {
   const [open, setOpen] = useState(false);
 
@@ -23,7 +24,7 @@ export default function DropDownFilterView({
         badgeColors="#FDE7B6"
         badgeDotColors="black"
         searchable={true}
-        multiple={true}
+        multiple={multiple}
         itemSeparator={true}
         closeAfterSelecting={true}
         mode="BADGE"
